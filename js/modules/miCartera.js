@@ -327,13 +327,15 @@ class MiCarteraModule {
      * Muestra la vista 360° del cliente
      */
     mostrarVista360(cliente, productos, deudaTotal) {
-        // Calcular métricas
-        const carteraTotal = productos.reduce((sum, p) => sum + (p.montoLinea || 0), 0);
-        const utilidadAnual = Math.round(carteraTotal * 0.025); // 2.5% estimado
-        const scoreReciprocidad = Math.min(100, Math.round((productos.length / 5) * 100));
-        const saldoPromedio = productos.length > 0 ? Math.round(carteraTotal / productos.length) : 0;
-        const diasMorosidad = cliente.fechaBaja ? Math.round((new Date() - new Date(cliente.fechaBaja)) / (1000 * 60 * 60 * 24)) : 0;
-        const productosActivos = productos.filter(p => !p.fechaBaja).length;
+        // Métricas provenientes del cliente o cálculo de respaldo
+        const indicadores = cliente.indicadores || {};
+        const carteraTotalCalculada = productos.reduce((sum, p) => sum + (p.montoLinea || 0), 0);
+        const carteraTotal = (cliente.valorCartera ?? indicadores.carteraTotal ?? carteraTotalCalculada) || 0;
+        const utilidadAnual = indicadores.utilidadAnualEstimada ?? Math.round(carteraTotal * 0.025);
+        const scoreReciprocidad = indicadores.scoreReciprocidad ?? Math.min(100, Math.round((productos.length / 5) * 100));
+        const saldoPromedio = indicadores.saldoPromedio ?? (productos.length > 0 ? Math.round(carteraTotal / productos.length) : 0);
+        const diasMorosidad = indicadores.diasMora ?? 0;
+        const productosActivos = indicadores.productosActivos ?? productos.filter(p => !p.fechaBaja).length;
         
         // Obtener iniciales para avatar
         const iniciales = this.obtenerIniciales(cliente.nombre);

@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Dashboard</title>
+
+    <!-- Estilos externos -->
+    <?!= include('Styles'); ?>
+
+        <!-- Chart.js para gráficos -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <h1>Mi CRM</h1>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-link active">Reportes y Tableros</a>
+                <a href="#" class="nav-link">Prospectos</a>
+                <a href="#" class="nav-link">Oportunidades</a>
+                <a href="#" class="nav-link">Mi Cartera</a>
+            </nav>
+            <div class="user-section">
+                <span class="user-name">Usuario</span>
+                <div class="user-avatar">U</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra Lateral del Asistente IA -->
+    <aside class="ai-sidebar" id="aiSidebar">
+        <div class="ai-sidebar-header">
+            <div class="ai-header-content">
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-info">
+                    <h3 class="ai-name">REGIO</h3>
+                    <p class="ai-subtitle">Resultados y Gestión Inteligente Operativa</p>
+                </div>
+            </div>
+            <button class="ai-toggle-btn" onclick="toggleAISidebar()" title="Cerrar">✕</button>
+        </div>
+
+        <!-- Navegación de la barra lateral -->
+        <div class="sidebar-nav">
+            <div class="nav-grid">
+                <button class="sidebar-nav-btn active" onclick="switchSidebarView('agente')" id="navAgente">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-text">Agente IA</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="switchSidebarView('recordatorios')" id="navRecordatorios">
+                    <span class="nav-icon">⏰</span>
+                    <span class="nav-text">Recordatorios</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="switchSidebarView('agenda')" id="navAgenda">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">Mi agenda</span>
+                </button>
+                <button class="sidebar-nav-btn" onclick="switchSidebarView('cotizador')" id="navCotizador">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-text">Cotizador</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contenido dinámico de la barra lateral -->
+        <div class="sidebar-content">
+            <!-- Vista: Agente IA -->
+            <div class="sidebar-view active" id="viewAgente">
+                <div class="ai-chat-container" id="aiChatContainer">
+                    <div class="ai-welcome-message">
+                        <p>👋 ¡Hola! Soy <strong>REGIO</strong>, tu asistente inteligente de ventas.</p>
+                        <p>Puedo ayudarte con:</p>
+                        <ul>
+                            <li>📊 Análisis de oportunidades</li>
+                            <li>💡 Información de productos</li>
+                            <li>📈 Estrategias de venta cruzada</li>
+                        </ul>
+                        <p>¿En qué puedo ayudarte hoy?</p>
+                    </div>
+                </div>
+
+                <div class="ai-input-container">
+                    <textarea id="aiInput" class="ai-input" placeholder="Escribe tu pregunta aquí..." rows="1"></textarea>
+                    <button class="ai-send-btn" onclick="sendAIMessage()" title="Enviar">
+                        <span>📤</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Vista: Recordatorios -->
+            <div class="sidebar-view" id="viewRecordatorios">
+                <div class="recordatorios-container">
+                    <div class="recordatorios-header">
+                        <h4>⏰ Recordatorios del Día</h4>
+                        <p class="recordatorios-subtitle">Próximas fechas importantes</p>
+                    </div>
+                    <div class="recordatorios-list" id="recordatoriosList">
+                        <div class="recordatorio-item urgent">
+                            <div class="recordatorio-icon">🚨</div>
+                            <div class="recordatorio-content">
+                                <h5>Oportunidad TDC - Tech Solutions</h5>
+                                <p>Fecha límite: Hoy</p>
+                                <span class="recordatorio-type">Oportunidad</span>
+                            </div>
+                        </div>
+                        <div class="recordatorio-item warning">
+                            <div class="recordatorio-icon">📞</div>
+                            <div class="recordatorio-content">
+                                <h5>Llamada con Innovate Corp</h5>
+                                <p>Hora: 14:00</p>
+                                <span class="recordatorio-type">Cita</span>
+                            </div>
+                        </div>
+                        <div class="recordatorio-item info">
+                            <div class="recordatorio-icon">📋</div>
+                            <div class="recordatorio-content">
+                                <h5>Documentación TPV - StartUp Labs</h5>
+                                <p>Vence: Mañana</p>
+                                <span class="recordatorio-type">Tarea</span>
+                            </div>
+                        </div>
+                        <div class="recordatorio-item">
+                            <div class="recordatorio-icon">💼</div>
+                            <div class="recordatorio-content">
+                                <h5>Reunión de seguimiento</h5>
+                                <p>Hora: 16:30</p>
+                                <span class="recordatorio-type">Cita</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista: Mi Agenda -->
+            <div class="sidebar-view" id="viewAgenda">
+                <div class="agenda-container">
+                    <div class="agenda-header">
+                        <h4>📅 Mi Agenda de Hoy</h4>
+                        <p class="agenda-subtitle">Citas y reuniones programadas</p>
+                    </div>
+                    <div class="agenda-list" id="agendaList">
+                        <div class="agenda-item">
+                            <div class="agenda-time">09:00</div>
+                            <div class="agenda-content">
+                                <h5>Reunión inicial - Global Industries</h5>
+                                <p>Presentación de productos TDC</p>
+                                <span class="agenda-status">Confirmada</span>
+                            </div>
+                        </div>
+                        <div class="agenda-item">
+                            <div class="agenda-time">11:30</div>
+                            <div class="agenda-content">
+                                <h5>Llamada de seguimiento - SecureBank</h5>
+                                <p>Negociación TPV</p>
+                                <span class="agenda-status">Pendiente</span>
+                            </div>
+                        </div>
+                        <div class="agenda-item">
+                            <div class="agenda-time">14:00</div>
+                            <div class="agenda-content">
+                                <h5>Presentación - Retail Plus</h5>
+                                <p>Propuesta de servicios</p>
+                                <span class="agenda-status">Confirmada</span>
+                            </div>
+                        </div>
+                        <div class="agenda-item">
+                            <div class="agenda-time">16:30</div>
+                            <div class="agenda-content">
+                                <h5>Reunión de equipo</h5>
+                                <p>Revisión de objetivos</p>
+                                <span class="agenda-status">Interna</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista: Cotizador -->
+            <div class="sidebar-view" id="viewCotizador">
+                <div class="cotizador-chat-container">
+                    <div class="cotizador-chat" id="cotizadorChat">
+                        <div class="cotizador-welcome-message">
+                            <div class="ai-avatar">💰</div>
+                            <div class="welcome-content">
+                                <h5>¡Hola! Soy tu cotizador inteligente</h5>
+                                <p>Puedo ayudarte a calcular:</p>
+                                <ul>
+                                    <li>Crédito Personal (12, 24, 36 meses)</li>
+                                    <li>Crédito Auto (12, 24, 36, 48 meses)</li>
+                                    <li>Crédito Hipotecario (5, 10, 20, 30 años)</li>
+                                </ul>
+                                <p>¿Qué tipo de crédito necesitas cotizar?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cotizador-input-container">
+                        <textarea id="cotizadorInput" class="cotizador-input" placeholder="Escribe tu solicitud de cotización aquí..." rows="1"></textarea>
+                        <button class="cotizador-send-btn" onclick="sendCotizadorMessage()" title="Enviar">
+                            <span>📤</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Botón flotante para abrir el asistente -->
+    <button class="ai-float-btn" id="aiFloatBtn" onclick="toggleAISidebar()" title="Asistente IA">
+        <span class="ai-float-icon">🤖</span>
+        <span class="ai-float-text">REGIO</span>
+    </button>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section class="dashboard">
+            <!-- Indicadores -->
+            <div class="indicators-grid">
+                <!-- Mis Oportunidades -->
+                <div class="card">
+                    <h3 class="card-title">Mis Oportunidades</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Abiertas</span>
+                            <span class="stat-value" id="openOpportunities">12</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cerradas</span>
+                            <span class="stat-value" id="closedOpportunities">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Descartadas</span>
+                            <span class="stat-value" id="rejectedOpportunities">5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Totales</span>
+                            <span class="stat-value highlight" id="totalOpportunities">25</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mis Metas Este Mes -->
+                <div class="card">
+                    <h3 class="card-title">Mis Metas Este Mes</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Monto Gestionado</span>
+                            <span class="stat-value currency" id="managedAmount">$1,250,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Monto por Gestionar</span>
+                            <span class="stat-value currency" id="pendingAmount">$850,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Monto Descartado</span>
+                            <span class="stat-value currency" id="rejectedAmount">$320,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timbrados Acordeón -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion()">
+                    <h3 class="accordion-title">Timbrados</h3>
+                    <span class="accordion-icon" id="accordionIcon">▼</span>
+                </div>
+                <div class="accordion-content" id="timbradosContent">
+                    <div class="timbrados-grid">
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">TDC</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoTDC">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarTDC">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">TDCE</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoTDCE">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarTDCE">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">TPV</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoTPV">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarTPV">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">Nómina</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoNomina">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarNomina">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">Seguros</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoSeguros">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarSeguros">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">Crédito de auto</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoAuto">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarAuto">0</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timbrado-card">
+                            <h4 class="timbrado-product">Crédito hipotecario</h4>
+                            <div class="timbrado-stats">
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Timbrados</span>
+                                    <span class="timbrado-value" id="timbradoHipotecario">0</span>
+                                </div>
+                                <div class="timbrado-item">
+                                    <span class="timbrado-label">Por Timbrar</span>
+                                    <span class="timbrado-value" id="porTimbrarHipotecario">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Prospectos -->
+        <section class="prospects-section" id="prospectsSection" style="display: none;">
+            <!-- Indicadores de Prospectos -->
+            <div class="indicators-grid">
+                <!-- Mis Prospectos -->
+                <div class="card">
+                    <h3 class="card-title">Mis Prospectos</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">No Contactados</span>
+                            <span class="stat-value" id="noContactadosProspects">8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Interesados</span>
+                            <span class="stat-value" id="interesadosProspects">5</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">En Consideración</span>
+                            <span class="stat-value" id="enConsideracionProspects">3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Documentación</span>
+                            <span class="stat-value" id="documentacionProspects">2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Cerrados</span>
+                            <span class="stat-value" id="cerradosProspects">4</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Descartados</span>
+                            <span class="stat-value" id="descartadosProspects">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Totales</span>
+                            <span class="stat-value highlight" id="totalProspects">23</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversión de Prospectos -->
+                <div class="card">
+                    <h3 class="card-title">Conversión de Prospectos</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Tasa de Conversión</span>
+                            <span class="stat-value percentage" id="tasaConversion">17.4%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Prospectos Activos</span>
+                            <span class="stat-value" id="prospectosActivos">18</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Valor Potencial</span>
+                            <span class="stat-value currency" id="valorPotencial">$2,150,000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Valor Cerrado</span>
+                            <span class="stat-value currency" id="valorCerrado">$375,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Prospectos -->
+            <div class="section-header">
+                <h2 class="section-title">Seguimiento de Prospectos</h2>
+                <button class="btn-primary" id="addProspectBtn">+ Nuevo Prospecto</button>
+            </div>
+
+            <!-- Filtros para Prospectos -->
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filterProspectStatus">Estado:</label>
+                    <select id="filterProspectStatus" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="no_contactado">No Contactado</option>
+                        <option value="interesado">Interesado</option>
+                        <option value="en_consideracion">En Consideración</option>
+                        <option value="documentacion">Documentación</option>
+                        <option value="cerrado">Cerrado</option>
+                        <option value="descartado">Descartado</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterProspectProduct">Producto:</label>
+                    <select id="filterProspectProduct" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="TDC">TDC</option>
+                        <option value="TDCE">TDCE</option>
+                        <option value="TPV">TPV</option>
+                        <option value="Nómina">Nómina</option>
+                        <option value="Seguros">Seguros</option>
+                        <option value="Crédito de auto">Crédito de auto</option>
+                        <option value="Crédito hipotecario">Crédito hipotecario</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterProspectSearch">Buscar:</label>
+                    <input type="text" id="filterProspectSearch" class="filter-input" placeholder="Buscar prospecto...">
+                </div>
+                <button class="btn-secondary" id="clearProspectFiltersBtn">Limpiar Filtros</button>
+            </div>
+
+            <!-- Tabla de Prospectos -->
+            <div class="table-container">
+                <table class="pipeline-table" id="prospectsTable">
+                    <thead>
+                        <tr>
+                            <th>Prospecto</th>
+                            <th>Producto</th>
+                            <th>Estado</th>
+                            <th class="sortable" onclick="sortProspectsTable('amount')">
+                                Valor Potencial
+                                <span class="sort-icon" id="sortIconProspectAmount">⇅</span>
+                            </th>
+                            <th class="sortable" onclick="sortProspectsTable('date')">
+                                Fecha de Contacto
+                                <span class="sort-icon" id="sortIconProspectDate">⇅</span>
+                            </th>
+                            <th>Último Contacto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prospectsTableBody">
+                        <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Mi Cartera -->
+        <section class="portfolio-section" id="portfolioSection" style="display: none;">
+            <!-- Header de Mi Cartera -->
+            <div class="section-header">
+                <h2 class="section-title">Mi Cartera de Clientes</h2>
+            </div>
+
+            <!-- Filtros para Mi Cartera -->
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filterClientStatus">Estado:</label>
+                    <select id="filterClientStatus" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="complete">Productos Completos</option>
+                        <option value="incomplete">Necesita Productos</option>
+                        <option value="priority">Prioridad Alta</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterClientProduct">Producto Actual:</label>
+                    <select id="filterClientProduct" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="TDC">TDC</option>
+                        <option value="TPV">TPV</option>
+                        <option value="Nómina">Nómina</option>
+                        <option value="Seguros">Seguros</option>
+                        <option value="Crédito Auto">Crédito Auto</option>
+                        <option value="Crédito Hipotecario">Crédito Hipotecario</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterClientSearch">Buscar:</label>
+                    <input type="text" id="filterClientSearch" class="filter-input" placeholder="Buscar cliente...">
+                </div>
+                <button class="btn-secondary" id="clearClientFiltersBtn">Limpiar Filtros</button>
+            </div>
+
+            <!-- Tabla de Mi Cartera -->
+            <div class="table-container">
+                <table class="pipeline-table" id="portfolioTable">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Último Contacto</th>
+                            <th>Prioridad</th>
+                            <th>Valor Cartera</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="portfolioTableBody">
+                        <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección de Reportes -->
+        <section class="reports-section" id="reportsSection" style="display: none;">
+            <!-- Dashboard de Reportes -->
+            <div class="reports-header">
+                <h2 class="section-title">Reportes y Tableros</h2>
+                <div class="reports-filters">
+                    <select id="reportType" class="filter-select">
+                        <option value="">Seleccionar tipo de reporte</option>
+                        <option value="sales">Reporte de Ventas</option>
+                        <option value="prospects">Reporte de Prospectos</option>
+                        <option value="placement">Reporte de Colocación</option>
+                        <option value="capture">Reporte de Captación</option>
+                        <option value="performance">Reporte de Rendimiento</option>
+                    </select>
+                    <select id="reportPeriod" class="filter-select">
+                        <option value="month">Este Mes</option>
+                        <option value="quarter">Este Trimestre</option>
+                        <option value="year">Este Año</option>
+                    </select>
+                    <button class="btn-primary" id="consultReportBtn">Consultar</button>
+                </div>
+            </div>
+
+            <!-- Métricas Principales -->
+            <div class="metrics-grid">
+                <!-- Mi Colocación -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Mi Colocación</h3>
+                        <span class="metric-icon">💰</span>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value">$2,450,000</div>
+                        <div class="metric-change positive">+12.5% vs mes anterior</div>
+                        <div class="metric-details">
+                            <div class="metric-item">
+                                <span class="metric-label">TDC:</span>
+                                <span class="metric-amount">$1,200,000</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Crédito Auto:</span>
+                                <span class="metric-amount">$850,000</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Crédito Hipotecario:</span>
+                                <span class="metric-amount">$400,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mi Captación -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Mi Captación</h3>
+                        <span class="metric-icon">📈</span>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value">$3,200,000</div>
+                        <div class="metric-change positive">+8.3% vs mes anterior</div>
+                        <div class="metric-details">
+                            <div class="metric-item">
+                                <span class="metric-label">Depósitos:</span>
+                                <span class="metric-amount">$2,100,000</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Inversiones:</span>
+                                <span class="metric-amount">$1,100,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversión de Prospectos -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Conversión Prospectos</h3>
+                        <span class="metric-icon">🎯</span>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value">18.5%</div>
+                        <div class="metric-change positive">+2.1% vs mes anterior</div>
+                        <div class="metric-details">
+                            <div class="metric-item">
+                                <span class="metric-label">Prospectos Totales:</span>
+                                <span class="metric-amount">23</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Convertidos:</span>
+                                <span class="metric-amount">4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pipeline de Ventas -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>Pipeline de Ventas</h3>
+                        <span class="metric-icon">🔄</span>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value">$4,850,000</div>
+                        <div class="metric-change neutral">Estable vs mes anterior</div>
+                        <div class="metric-details">
+                            <div class="metric-item">
+                                <span class="metric-label">En Negociación:</span>
+                                <span class="metric-amount">$2,100,000</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Propuestas:</span>
+                                <span class="metric-amount">$1,750,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-grid">
+                <!-- Gráfico de Colocación por Producto -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Colocación por Producto</h4>
+                        <div class="chart-period">Últimos 6 meses</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="placementChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Captación -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Captación Mensual</h4>
+                        <div class="chart-period">Últimos 12 meses</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="captureChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Conversión de Prospectos -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Conversión de Prospectos</h4>
+                        <div class="chart-period">Por Estado</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="conversionChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Pipeline -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h4>Pipeline de Ventas</h4>
+                        <div class="chart-period">Por Etapa</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pipelineChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Rendimiento -->
+            <div class="performance-section">
+                <h3>Rendimiento por Producto</h3>
+                <div class="table-container">
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Meta Mensual</th>
+                                <th>Colocado</th>
+                                <th>% Cumplimiento</th>
+                                <th>Prospectos</th>
+                                <th>Conversión</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TDC</td>
+                                <td>$1,000,000</td>
+                                <td>$1,200,000</td>
+                                <td><span class="performance-badge success">120%</span></td>
+                                <td>8</td>
+                                <td>25%</td>
+                            </tr>
+                            <tr>
+                                <td>Crédito Auto</td>
+                                <td>$800,000</td>
+                                <td>$850,000</td>
+                                <td><span class="performance-badge success">106%</span></td>
+                                <td>5</td>
+                                <td>20%</td>
+                            </tr>
+                            <tr>
+                                <td>Crédito Hipotecario</td>
+                                <td>$1,200,000</td>
+                                <td>$1,100,000</td>
+                                <td><span class="performance-badge success">92%</span></td>
+                                <td>1</td>
+                                <td>100%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline de Ventas -->
+        <section class="pipeline-section">
+            <div class="section-header">
+                <h2 class="section-title">Tubería de Ventas</h2>
+                <button class="btn-primary" id="addOpportunityBtn">+ Nueva Oportunidad</button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filterStatus">Estado:</label>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="no_contactado">No contactado</option>
+                        <option value="calificacion">Calificación</option>
+                        <option value="propuesta">Propuesta</option>
+                        <option value="negociacion">Negociación</option>
+                        <option value="cerrada">Cerrada</option>
+                        <option value="descartada">Descartada</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterProductFamily">Familia de Producto:</label>
+                    <select id="filterProductFamily" class="filter-select">
+                        <option value="">Todas</option>
+                        <option value="TDC">TDC</option>
+                        <option value="TDCE">TDCE</option>
+                        <option value="TPV">TPV</option>
+                        <option value="Nómina">Nómina</option>
+                        <option value="Seguros">Seguros</option>
+                        <option value="Crédito de auto">Crédito de auto</option>
+                        <option value="Crédito hipotecario">Crédito hipotecario</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterTimbrado">Timbrado:</label>
+                    <select id="filterTimbrado" class="filter-select">
+                        <option value="">Todos</option>
+                        <option value="true">Timbrado</option>
+                        <option value="false">No timbrado</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterSearch">Buscar:</label>
+                    <input type="text" id="filterSearch" class="filter-input" placeholder="Buscar cliente...">
+                </div>
+                <button class="btn-secondary" id="clearFiltersBtn">Limpiar Filtros</button>
+            </div>
+
+            <!-- Paginación -->
+            <div class="pagination" id="pagination">
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevPage" disabled>← Anterior</button>
+                    <div class="pagination-info">
+                        <span>Página</span>
+                        <select class="page-select" id="pageSelect">
+                            <option value="1">1</option>
+                        </select>
+                        <span>de <span id="totalPages">1</span></span>
+                    </div>
+                    <button class="pagination-btn" id="nextPage">Siguiente →</button>
+                </div>
+                <div class="pagination-info">
+                    <span>Total: <span id="totalRecords">0</span> registros</span>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="table-container">
+                <table class="pipeline-table" id="pipelineTable">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Familia de Producto</th>
+                            <th>Estado</th>
+                            <th>Timbrado</th>
+                            <th class="sortable" onclick="sortTable('amount')">
+                                Monto
+                                <span class="sort-icon" id="sortIconAmount">⇅</span>
+                            </th>
+                            <th class="sortable" onclick="sortTable('closeDate')">
+                                Fecha de Cierre
+                                <span class="sort-icon" id="sortIconCloseDate">⇅</span>
+                            </th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Modal Nueva Oportunidad -->
+    <div id="newOpportunityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Oportunidad</h2>
+                <button class="modal-close" onclick="closeNewOpportunityModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-content-section">
+                    <form id="newOpportunityForm">
+                        <div class="modal-grid">
+                            <div class="modal-field">
+                                <label class="modal-label" for="newOppClient">Cliente *</label>
+                                <select id="newOppClient" class="form-input" required>
+                                    <option value="">Seleccione un cliente</option>
+                                    <option value="Tech Solutions S.A.">Tech Solutions S.A.</option>
+                                    <option value="Innovate Corp">Innovate Corp</option>
+                                    <option value="StartUp Labs">StartUp Labs</option>
+                                    <option value="Global Industries">Global Industries</option>
+                                    <option value="SecureBank">SecureBank</option>
+                                    <option value="Retail Plus">Retail Plus</option>
+                                    <option value="Logistics Pro">Logistics Pro</option>
+                                    <option value="DataCorp">DataCorp</option>
+                                    <option value="Marketing Agency">Marketing Agency</option>
+                                    <option value="Enterprise Co">Enterprise Co</option>
+                                    <option value="Manufacturing Inc">Manufacturing Inc</option>
+                                    <option value="Services Group">Services Group</option>
+                                    <option value="Education Plus">Education Plus</option>
+                                    <option value="Sales Experts">Sales Experts</option>
+                                    <option value="Digital Media">Digital Media</option>
+                                    <option value="Finance Corp">Finance Corp</option>
+                                    <option value="Analytics Pro">Analytics Pro</option>
+                                    <option value="Tech Partners">Tech Partners</option>
+                                    <option value="Corporate Group">Corporate Group</option>
+                                    <option value="Traditional Co">Traditional Co</option>
+                                    <option value="Warehouse Solutions">Warehouse Solutions</option>
+                                    <option value="Customer First">Customer First</option>
+                                    <option value="Design Studio">Design Studio</option>
+                                    <option value="Smart Industries">Smart Industries</option>
+                                    <option value="Data Insights">Data Insights</option>
+                                </select>
+                            </div>
+                            <div class="modal-field">
+                                <label class="modal-label" for="newOppProductFamily">Familia de Producto *</label>
+                                <select id="newOppProductFamily" class="form-input" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="TDC">TDC</option>
+                                    <option value="TDCE">TDCE</option>
+                                    <option value="TPV">TPV</option>
+                                    <option value="Nómina">Nómina</option>
+                                    <option value="Seguros">Seguros</option>
+                                    <option value="Crédito de auto">Crédito de auto</option>
+                                    <option value="Crédito hipotecario">Crédito hipotecario</option>
+                                </select>
+                            </div>
+                            <div class="modal-field">
+                                <label class="modal-label" for="newOppStatus">Estado *</label>
+                                <select id="newOppStatus" class="form-input" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="no_contactado">No contactado</option>
+                                    <option value="calificacion">Calificación</option>
+                                    <option value="propuesta">Propuesta</option>
+                                    <option value="negociacion">Negociación</option>
+                                    <option value="cerrada">Cerrada</option>
+                                    <option value="descartada">Descartada</option>
+                                </select>
+                            </div>
+                            <div class="modal-field">
+                                <label class="modal-label" for="newOppAmount">Monto *</label>
+                                <input type="number" id="newOppAmount" class="form-input" required placeholder="0" min="0" step="1000">
+                            </div>
+                            <div class="modal-field">
+                                <label class="modal-label" for="newOppCloseDate">Fecha de Cierre *</label>
+                                <input type="date" id="newOppCloseDate" class="form-input" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveNewOpportunity()">Guardar Oportunidad</button>
+                <button class="btn-secondary" onclick="closeNewOpportunityModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Oportunidad -->
+    <div id="opportunityModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Detalle de Oportunidad</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchTab('detalle')">Detalle</button>
+                    <button class="modal-tab" onclick="switchTab('otras')">Otras Oportunidades</button>
+                    <button class="modal-tab" onclick="switchTab('ventacruzada')">Venta Cruzada</button>
+                </div>
+
+                <!-- Tab: Detalle -->
+                <div class="modal-content-section tab-content active" id="tabDetalle">
+                    <div class="detalle-layout">
+                        <!-- Columna Izquierda: Descripción de la Oferta -->
+                        <div class="detalle-left">
+                            <div class="oferta-section" id="ofertaSection">
+                                <div class="oferta-header">
+                                    <span class="oferta-icon">💡</span>
+                                    <h4 class="oferta-title">Descripción de la Oferta</h4>
+                                </div>
+                                <p class="oferta-intro" id="ofertaIntro"></p>
+                                <div class="oferta-beneficios" id="ofertaBeneficios"></div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Derecha: Contacto e Información -->
+                        <div class="detalle-right">
+                            <!-- Sección Superior: Contacto -->
+                            <div class="contact-info">
+                                <h4>Contactar</h4>
+                                <div class="contact-details">
+                                    <div class="contact-item">
+                                        <span>📞</span>
+                                        <span>Oficina: 33-3955-4306</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <span>📱</span>
+                                        <span>Celular: <span id="modalPhone"></span></span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <span>✉️</span>
+                                        <span>Email: <span id="modalEmail"></span></span>
+                                    </div>
+                                </div>
+                                <div class="contact-actions">
+                                    <button class="btn-contact whatsapp" onclick="iniciarWhatsApp()">
+                                        <span>💬</span>
+                                        <span>Iniciar WhatsApp</span>
+                                    </button>
+                                    <button class="btn-contact call" onclick="iniciarLlamada()">
+                                        <span>📞</span>
+                                        <span>Iniciar Llamada</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sección Inferior: Detalles de la Oportunidad -->
+                            <div class="info-oportunidad">
+                                <h4>Detalles de la Oportunidad</h4>
+                                <div class="info-grid">
+                                    <div class="info-field">
+                                        <label class="info-label">No. Cliente Único</label>
+                                        <p class="info-value" id="modalClientId"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Nombre del Cliente</label>
+                                        <p class="info-value" id="modalClient"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Familia de Producto</label>
+                                        <p class="info-value" id="modalProductFamily"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Estado</label>
+                                        <select id="modalStatus" class="form-input">
+                                            <option value="no_contactado">No contactado</option>
+                                            <option value="calificacion">Calificación</option>
+                                            <option value="propuesta">Propuesta</option>
+                                            <option value="negociacion">Negociación</option>
+                                            <option value="cerrada">Cerrada</option>
+                                            <option value="descartada">Descartada</option>
+                                        </select>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Monto</label>
+                                        <p class="info-value amount-large" id="modalAmount"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Fecha de Cierre</label>
+                                        <p class="info-value" id="modalCloseDate"></p>
+                                    </div>
+                                    <div class="info-field full-width">
+                                        <label class="info-label">Comentarios</label>
+                                        <textarea id="modalComments" class="form-input" rows="3" placeholder="Añade comentarios sobre esta oportunidad..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Otras Oportunidades -->
+                <div class="modal-content-section tab-content" id="tabOtras">
+                    <h4 style="margin-bottom: 1rem; color: var(--color-text);">Oportunidades del mismo cliente</h4>
+                    <div id="otrasOportunidadesContainer">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Tab: Venta Cruzada -->
+                <div class="modal-content-section tab-content" id="tabVentaCruzada">
+                    <h4 style="margin-bottom: 1.5rem; color: var(--color-text);">Análisis de Venta Cruzada</h4>
+
+                    <!-- Productos que tiene el cliente -->
+                    <div class="cross-sell-section">
+                        <div class="cross-sell-header">
+                            <span class="cross-sell-icon">✅</span>
+                            <h5>Productos Actuales del Cliente</h5>
+                        </div>
+                        <div id="productosActuales" class="productos-grid">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Productos preautorizados -->
+                    <div class="cross-sell-section highlight">
+                        <div class="cross-sell-header">
+                            <span class="cross-sell-icon">⭐</span>
+                            <h5>Productos Preautorizados para Ofrecer</h5>
+                        </div>
+                        <p class="cross-sell-subtitle">El cliente fue calificado y está apto para recibir estos productos</p>
+                        <div id="productosPreautorizados" class="productos-preautorizados">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveOpportunity()">Guardar Oportunidad</button>
+                <button class="btn-secondary" onclick="closeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Prospecto -->
+    <div id="prospectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="prospectModalTitle">Detalle de Prospecto</h2>
+                <button class="modal-close" onclick="closeProspectModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs -->
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="switchProspectTab('detalle')">Detalle</button>
+                    <button class="modal-tab" onclick="switchProspectTab('historial')">Historial</button>
+                </div>
+
+                <!-- Tab: Detalle -->
+                <div class="modal-content-section tab-content active" id="prospectTabDetalle">
+                    <div class="detalle-layout">
+                        <!-- Columna Izquierda: Prospecto -->
+                        <div class="detalle-left">
+                            <div class="prospect-info-section">
+                                <div class="prospect-header">
+                                    <span class="prospect-icon">👤</span>
+                                    <h4 class="prospect-title">Prospecto</h4>
+                                </div>
+                                <div class="prospect-details">
+                                    <div class="prospect-field">
+                                        <label class="prospect-label">Nombre:</label>
+                                        <p class="prospect-value" id="prospectName"></p>
+                                    </div>
+                                    <div class="prospect-field">
+                                        <label class="prospect-label">Producto de Interés:</label>
+                                        <p class="prospect-value" id="prospectProduct"></p>
+                                    </div>
+                                    <div class="prospect-field">
+                                        <label class="prospect-label">Estado Actual:</label>
+                                        <select id="prospectStatus" class="form-input">
+                                            <option value="no_contactado">No Contactado</option>
+                                            <option value="interesado">Interesado</option>
+                                            <option value="en_consideracion">En Consideración</option>
+                                            <option value="documentacion">Documentación</option>
+                                            <option value="cerrado">Cerrado</option>
+                                            <option value="descartado">Descartado</option>
+                                        </select>
+                                    </div>
+                                    <div class="prospect-field">
+                                        <label class="prospect-label">Valor Potencial:</label>
+                                        <p class="prospect-value amount-large" id="prospectAmount"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Derecha: Contacto e Información -->
+                        <div class="detalle-right">
+                            <!-- Sección Superior: Contacto -->
+                            <div class="contact-info">
+                                <h4>Contactar</h4>
+                                <div class="contact-details">
+                                    <div class="contact-item">
+                                        <span>📞</span>
+                                        <span>Oficina: 33-3955-4306</span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <span>📱</span>
+                                        <span>Celular: <span id="prospectPhoneDisplay"></span></span>
+                                    </div>
+                                    <div class="contact-item">
+                                        <span>✉️</span>
+                                        <span>Email: <span id="prospectEmail"></span></span>
+                                    </div>
+                                </div>
+                                <div class="contact-actions">
+                                    <button class="btn-contact whatsapp" onclick="iniciarWhatsAppProspect()">
+                                        <span>💬</span>
+                                        <span>Iniciar WhatsApp</span>
+                                    </button>
+                                    <button class="btn-contact call" onclick="iniciarLlamadaProspect()">
+                                        <span>📞</span>
+                                        <span>Iniciar Llamada</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Sección Inferior: Información Adicional -->
+                            <div class="info-prospecto">
+                                <h4>Información Adicional</h4>
+                                <div class="info-grid">
+                                    <div class="info-field">
+                                        <label class="info-label">Teléfono</label>
+                                        <p class="info-value" id="prospectPhone"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Fecha de Contacto</label>
+                                        <p class="info-value" id="prospectContactDate"></p>
+                                    </div>
+                                    <div class="info-field">
+                                        <label class="info-label">Último Contacto</label>
+                                        <p class="info-value" id="prospectLastContact"></p>
+                                    </div>
+                                    <div class="info-field full-width">
+                                        <label class="info-label">Comentarios</label>
+                                        <textarea id="prospectComments" class="form-input" rows="3" placeholder="Añade comentarios sobre este prospecto..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Historial -->
+                <div class="modal-content-section tab-content" id="prospectTabHistorial">
+                    <h4 style="margin-bottom: 1rem; color: var(--color-text);">Historial de Contactos</h4>
+                    <div id="prospectHistorialContainer">
+                        <!-- Se llenará dinámicamente -->
+                        <div class="historial-item">
+                            <div class="historial-date">2025-01-20</div>
+                            <div class="historial-content">
+                                <h5>Llamada telefónica</h5>
+                                <p>Cliente mostró interés en la Tarjeta de Crédito. Solicita información sobre beneficios y requisitos.</p>
+                                <span class="historial-type">Teléfono</span>
+                            </div>
+                        </div>
+                        <div class="historial-item">
+                            <div class="historial-date">2025-01-15</div>
+                            <div class="historial-content">
+                                <h5>Primer contacto</h5>
+                                <p>Prospecto identificado a través de referencia. Contacto inicial establecido para productos bancarios.</p>
+                                <span class="historial-type">Referencia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="saveProspect()">Guardar Prospecto</button>
+                <button class="btn-secondary" onclick="closeProspectModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cliente -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="clientModalTitle">Detalle de Cliente</h2>
+                <button class="modal-close" onclick="closeClientModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Datos del Cliente -->
+                <div class="client-info-section">
+                    <div class="client-details">
+                        <div class="client-field">
+                            <label class="client-label">Cliente:</label>
+                            <p class="client-value" id="clientName"></p>
+                        </div>
+                        <div class="client-field">
+                            <label class="client-label">Teléfono:</label>
+                            <p class="client-value" id="clientPhone"></p>
+                        </div>
+                        <div class="client-field">
+                            <label class="client-label">Email:</label>
+                            <p class="client-value" id="clientEmail"></p>
+                        </div>
+                        <div class="client-field">
+                            <label class="client-label">Valor Cartera:</label>
+                            <p class="client-value amount-large" id="clientPortfolioValue"></p>
+                        </div>
+                        <div class="client-field">
+                            <label class="client-label">Último Contacto:</label>
+                            <p class="client-value" id="clientLastContact"></p>
+                        </div>
+                        <div class="client-field">
+                            <label class="client-label">Prioridad:</label>
+                            <p class="client-value" id="clientPriority"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos Actuales -->
+                <div class="products-section">
+                    <h4>Productos Actuales</h4>
+                    <div class="products-grid" id="currentProductsGrid">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Productos que le Falta Ofrecer -->
+                <div class="products-section">
+                    <h4>Le Falta Ofrecer</h4>
+                    <div class="products-grid" id="missingProductsGrid">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Acciones de Contacto -->
+                <div class="contact-actions-section">
+                    <h4>Contactar</h4>
+                    <div class="contact-actions">
+                        <button class="btn-contact whatsapp" onclick="iniciarWhatsAppClient()">
+                            <span>💬</span>
+                            <span>Iniciar WhatsApp</span>
+                        </button>
+                        <button class="btn-contact call" onclick="iniciarLlamadaClient()">
+                            <span>📞</span>
+                            <span>Iniciar Llamada</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeClientModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript externo -->
+    <?!= include('Script'); ?>
+</body>
+
+</html>

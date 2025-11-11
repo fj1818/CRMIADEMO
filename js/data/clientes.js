@@ -17,7 +17,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-001",
         idProspecto: "180123456789012345",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 1825000,
+        indicadores: {
+            carteraTotal: 1825000,
+            utilidadAnualEstimada: 45625,
+            scoreReciprocidad: 55,
+            saldoPromedio: 608000,
+            diasMora: 0,
+            productosActivos: 3
+        }
     },
     {
         id: 2,
@@ -29,7 +38,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-002",
         idProspecto: "180234567890123456",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 1550000,
+        indicadores: {
+            carteraTotal: 1550000,
+            utilidadAnualEstimada: 37200,
+            scoreReciprocidad: 60,
+            saldoPromedio: 540000,
+            diasMora: 0,
+            productosActivos: 2
+        }
     },
     {
         id: 3,
@@ -65,7 +83,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-005",
         idProspecto: "180567890123456789",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 975000,
+        indicadores: {
+            carteraTotal: 975000,
+            utilidadAnualEstimada: 26800,
+            scoreReciprocidad: 48,
+            saldoPromedio: 355000,
+            diasMora: 12,
+            productosActivos: 2
+        }
     },
     {
         id: 6,
@@ -77,7 +104,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-006",
         idProspecto: "180678901234567890",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 2120000,
+        indicadores: {
+            carteraTotal: 2120000,
+            utilidadAnualEstimada: 68400,
+            scoreReciprocidad: 62,
+            saldoPromedio: 715000,
+            diasMora: 0,
+            productosActivos: 4
+        }
     },
     {
         id: 7,
@@ -89,7 +125,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-007",
         idProspecto: "180789012345678901",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 3850000,
+        indicadores: {
+            carteraTotal: 3850000,
+            utilidadAnualEstimada: 115500,
+            scoreReciprocidad: 72,
+            saldoPromedio: 1280000,
+            diasMora: 0,
+            productosActivos: 5
+        }
     },
     {
         id: 8,
@@ -125,7 +170,16 @@ const CLIENTES_DATA = [
         ide: "IDE-2023-010",
         idProspecto: "181012345678901234",
         tipoPersona: "Persona Moral",
-        fechaBaja: null
+        fechaBaja: null,
+        valorCartera: 2475000,
+        indicadores: {
+            carteraTotal: 2475000,
+            utilidadAnualEstimada: 74250,
+            scoreReciprocidad: 58,
+            saldoPromedio: 825000,
+            diasMora: 5,
+            productosActivos: 3
+        }
     },
     {
         id: 11,
