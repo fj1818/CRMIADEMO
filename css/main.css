@@ -1,0 +1,33 @@
+/**
+ * ============================================
+ * ARCHIVO PRINCIPAL DE ESTILOS
+ * ============================================
+ * Importa todos los módulos CSS en el orden correcto
+ */
+
+/* 1. Variables y configuración base */
+@import url('variables.css');
+@import url('reset.css');
+
+/* 2. Layout */
+@import url('layout/navbar.css');
+@import url('layout/main.css');
+
+/* 3. Componentes */
+@import url('components/cards.css');
+@import url('components/buttons.css');
+@import url('components/tables.css');
+@import url('components/stats.css');
+@import url('components/multiselect.css');
+@import url('components/cliente360.css');
+@import url('components/pipeline.css');
+@import url('components/prospectos.css');
+@import url('components/modal-oportunidad.css');
+@import url('components/construction.css');
+
+/* 4. Utilidades */
+@import url('utilities.css');
+
+/* 5. Responsive (debe ir al final) */
+@import url('responsive.css');
+

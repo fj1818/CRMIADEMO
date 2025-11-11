@@ -1,0 +1,124 @@
+/**
+ * ============================================
+ * COMPONENTE DE SELECTOR MÚLTIPLE
+ * ============================================
+ */
+
+.multiselect-container {
+    position: relative;
+    display: inline-block;
+    min-width: 250px;
+    margin-left: var(--spacing-md);
+}
+
+.multiselect-selected {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem var(--spacing-md);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    background-color: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+    user-select: none;
+}
+
+.multiselect-selected:hover {
+    border-color: var(--primary-orange);
+}
+
+.multiselect-selected.active {
+    border-color: var(--primary-orange);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.multiselect-label {
+    color: var(--gray-600);
+    font-size: var(--font-sm);
+    flex: 1;
+}
+
+.multiselect-label.has-selection {
+    color: var(--black);
+    font-weight: 500;
+}
+
+.multiselect-arrow {
+    margin-left: var(--spacing-sm);
+    transition: transform 0.3s ease;
+}
+
+.multiselect-arrow.open {
+    transform: rotate(180deg);
+}
+
+.multiselect-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--white);
+    border: 2px solid var(--primary-orange);
+    border-top: none;
+    border-bottom-left-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    display: none;
+}
+
+.multiselect-dropdown.show {
+    display: block;
+}
+
+.multiselect-option {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem var(--spacing-md);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.multiselect-option:hover {
+    background-color: var(--gray-100);
+}
+
+.multiselect-option.selected {
+    background-color: rgba(255, 128, 0, 0.1);
+}
+
+.multiselect-checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: var(--spacing-sm);
+    cursor: pointer;
+    accent-color: var(--primary-orange);
+}
+
+.multiselect-option-label {
+    flex: 1;
+    font-size: var(--font-sm);
+}
+
+.multiselect-count {
+    background-color: var(--primary-orange);
+    color: var(--white);
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--radius-full);
+    font-size: var(--font-xs);
+    font-weight: 600;
+    margin-left: var(--spacing-sm);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .multiselect-container {
+        min-width: 100%;
+        width: 100%;
+    }
+}
+

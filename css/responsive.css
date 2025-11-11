@@ -1,0 +1,96 @@
+/**
+ * ============================================
+ * ESTILOS RESPONSIVE
+ * ============================================
+ */
+
+/* Tablets y pantallas medianas */
+@media (max-width: 1024px) {
+    .nav-container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .nav-link span:not(.nav-icon) {
+        display: none;
+    }
+    
+    .nav-link {
+        padding: 0.75rem;
+    }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+    
+    .navbar {
+        height: auto;
+    }
+    
+    .nav-container {
+        flex-direction: column;
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+    }
+    
+    .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .user-name {
+        display: none;
+    }
+    
+    .main-container {
+        padding: var(--spacing-md);
+    }
+    
+    .section-header {
+        padding: var(--spacing-lg);
+    }
+    
+    .section-header h1 {
+        font-size: var(--font-2xl);
+    }
+    
+    .construction-message {
+        padding: var(--spacing-2xl) var(--spacing-lg);
+        margin: var(--spacing-xl) auto;
+    }
+    
+    .construction-icon {
+        font-size: 3.5rem;
+    }
+    
+    .construction-message h2 {
+        font-size: var(--font-2xl);
+    }
+    
+    .card {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+    :root {
+        font-size: 12px;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .nav-menu {
+        width: 100%;
+    }
+    
+    .nav-link {
+        padding: 0.5rem;
+    }
+}
+

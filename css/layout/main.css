@@ -1,0 +1,58 @@
+/**
+ * ============================================
+ * LAYOUT PRINCIPAL
+ * ============================================
+ */
+
+.main-container {
+    margin-top: 70px;
+    padding: var(--spacing-xl);
+    min-height: calc(100vh - 70px);
+}
+
+/* ============================================
+   SECCIONES DE CONTENIDO
+   ============================================ */
+.content-section {
+    display: none;
+    animation: fadeIn 0.4s ease-in;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   ENCABEZADO DE SECCIÓN
+   ============================================ */
+.section-header {
+    background-color: var(--white);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-xl);
+    border-left: 5px solid var(--primary-orange);
+}
+
+.section-header h1 {
+    font-size: var(--font-3xl);
+    color: var(--black);
+    margin-bottom: var(--spacing-sm);
+}
+
+.section-subtitle {
+    color: var(--gray-500);
+    font-size: var(--font-md);
+}
+

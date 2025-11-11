@@ -1,0 +1,248 @@
+/**
+ * CSS para Modal de Oportunidades
+ * Ventana modal con información detallada de la oportunidad
+ */
+
+/* Overlay del Modal */
+.oportunidad-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Contenedor del Modal */
+.oportunidad-modal {
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: calc(100% - 20px);
+    max-width: none;
+    max-height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.4s ease;
+    overflow: hidden;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header del Modal */
+.oportunidad-modal-header {
+    padding: 20px 32px;
+    border-bottom: 2px solid var(--neutral-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, var(--white) 0%, #F7F9FB 100%);
+    border-radius: 12px 12px 0 0;
+}
+
+.oportunidad-modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--neutral-dark);
+}
+
+.oportunidad-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--neutral-medium);
+    cursor: pointer;
+    padding: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.oportunidad-modal-close:hover {
+    background: var(--neutral-light);
+    color: var(--neutral-dark);
+}
+
+/* Body del Modal */
+.oportunidad-modal-body {
+    padding: 20px 32px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+}
+
+/* Secciones dentro del Modal */
+.oportunidad-section {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: var(--white);
+    border: 1px solid var(--neutral-light);
+    border-radius: 10px;
+}
+
+.oportunidad-section:last-child {
+    margin-bottom: 0;
+}
+
+.oportunidad-section-title {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--neutral-dark);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-pale);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Grid de Campos */
+.oportunidad-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.oportunidad-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.oportunidad-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--neutral-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.oportunidad-field span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--neutral-dark);
+}
+
+.oportunidad-field .text-small {
+    font-size: 11px;
+    color: var(--neutral-medium);
+    word-break: break-all;
+}
+
+.oportunidad-field .text-primary {
+    color: var(--primary-orange);
+    font-weight: 700;
+}
+
+.oportunidad-field .text-large {
+    font-size: 18px;
+}
+
+/* Footer del Modal */
+.oportunidad-modal-footer {
+    padding: 16px 32px;
+    border-top: 2px solid var(--neutral-light);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    background: var(--neutral-bg);
+    border-radius: 0 0 12px 12px;
+}
+
+.oportunidad-modal-footer .btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.oportunidad-modal-footer .btn-secondary {
+    background: var(--white);
+    color: var(--neutral-dark);
+    border: 2px solid var(--neutral-light);
+}
+
+.oportunidad-modal-footer .btn-secondary:hover {
+    background: var(--neutral-light);
+}
+
+.oportunidad-modal-footer .btn-primary {
+    background: var(--primary-orange) !important;
+    color: var(--white) !important;
+    border: 2px solid var(--primary-orange) !important;
+}
+
+.oportunidad-modal-footer .btn-primary:hover {
+    background: var(--primary-orange-dark) !important;
+    border-color: var(--primary-orange-dark) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 128, 0, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .oportunidad-modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .oportunidad-modal-header {
+        border-radius: 0;
+    }
+    
+    .oportunidad-modal-footer {
+        border-radius: 0;
+    }
+    
+    .oportunidad-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .oportunidad-modal-body {
+        padding: 16px;
+    }
+    
+    .oportunidad-section {
+        padding: 16px;
+    }
+    
+    .oportunidad-modal-footer {
+        flex-direction: column-reverse;
+    }
+    
+    .oportunidad-modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

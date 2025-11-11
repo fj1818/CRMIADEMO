@@ -1,0 +1,400 @@
+/**
+ * CSS para Vista 360° del Cliente
+ * Diseño moderno y corporativo con paleta de colores del CRM
+ */
+
+/* Contenedor Principal para Vista 360 */
+.cliente360-container {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Botón Volver */
+.cliente360-back-btn {
+    background: var(--white);
+    color: #FF8800;
+    border: 2px solid #FF8800;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cliente360-back-btn:hover {
+    background: #FF8800;
+    color: var(--white);
+    transform: translateX(-2px);
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.3);
+}
+
+/* Breadcrumb - Estilo idéntico al HTML original */
+.cliente360-breadcrumb {
+    background: var(--white);
+    padding: 10px 40px;
+    font-size: 13px;
+    color: #7F8C9A;
+    border-bottom: 1px solid #E8ECF0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+.cliente360-breadcrumb a {
+    color: #7F8C9A;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.cliente360-breadcrumb a:hover {
+    color: #FF8800;
+}
+
+.cliente360-breadcrumb span {
+    color: #2C3E50;
+    font-weight: 600;
+}
+
+.cliente360-breadcrumb-separator {
+    color: #E8ECF0;
+    font-weight: 400;
+}
+
+/* Contenido */
+.cliente360-content {
+    animation: slideIn 0.4s ease;
+    padding: 20px 40px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cliente Header */
+.cliente360-header {
+    background: linear-gradient(135deg, var(--white) 0%, #F7F9FB 100%);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--neutral-light, #E8ECF0);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cliente360-info-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.cliente360-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FFE4CC 0%, #CCE5FF 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary-color);
+    border: 3px solid var(--white);
+    box-shadow: 0 3px 12px rgba(255, 136, 0, 0.2);
+}
+
+.cliente360-info h1 {
+    font-size: 24px;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.cliente360-meta {
+    display: flex;
+    gap: 24px;
+    font-size: 14px;
+    color: #7F8C9A;
+    flex-wrap: wrap;
+}
+
+.cliente360-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cliente360-meta-item strong {
+    color: #2C3E50;
+    font-weight: 600;
+}
+
+.cliente360-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Grid de Métricas */
+.cliente360-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.cliente360-metric-card {
+    background: linear-gradient(135deg, var(--white) 0%, #F7F9FB 100%);
+    padding: 20px 16px;
+    border-radius: 10px;
+    border: 1px solid #E8ECF0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 95px;
+    transition: all 0.3s ease;
+}
+
+.cliente360-metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cliente360-metric-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.cliente360-metric-label {
+    font-size: 11px;
+    color: #7F8C9A;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-align: center;
+    line-height: 1.3;
+}
+
+/* Grid 2 Columnas */
+.cliente360-grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Cards de Sección */
+.cliente360-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #E8ECF0;
+    transition: all 0.3s ease;
+}
+
+.cliente360-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.cliente360-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #FFE4CC;
+}
+
+.cliente360-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.icon-orange-360 {
+    background: #FFE4CC;
+    color: var(--primary-color);
+}
+
+.icon-blue-360 {
+    background: #CCE5FF;
+    color: #0088FF;
+}
+
+.icon-teal-360 {
+    background: rgba(0, 204, 163, 0.15);
+    color: #00CCA3;
+}
+
+.icon-purple-360 {
+    background: rgba(163, 102, 255, 0.15);
+    color: #A366FF;
+}
+
+.cliente360-card-content {
+    font-size: 14px;
+    color: #2C3E50;
+}
+
+/* Tablas en Vista 360 */
+.cliente360-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+.cliente360-table th {
+    background: #F7F9FB;
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 600;
+    color: #2C3E50;
+    border-bottom: 2px solid #E8ECF0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.cliente360-table td {
+    padding: 14px;
+    border-bottom: 1px solid #E8ECF0;
+    color: #2C3E50;
+}
+
+.cliente360-table tr:last-child td {
+    border-bottom: none;
+}
+
+.cliente360-table tr:hover {
+    background: #F7F9FB;
+}
+
+/* Stat Box */
+.cliente360-stat-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #E8ECF0;
+}
+
+.cliente360-stat-box:last-child {
+    border-bottom: none;
+}
+
+.cliente360-stat-label {
+    font-size: 13px;
+    color: #7F8C9A;
+    font-weight: 500;
+}
+
+.cliente360-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2C3E50;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+    .cliente360-metrics-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1200px) {
+    .cliente360-grid-2col,
+    .cliente360-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .cliente360-overlay {
+        padding: 0;
+    }
+    
+    .cliente360-container {
+        border-radius: 0;
+        margin: 0;
+        min-height: 100vh;
+    }
+    
+    .cliente360-breadcrumb {
+        border-radius: 0;
+    }
+    
+    .cliente360-metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cliente360-grid-2col {
+        grid-template-columns: 1fr;
+    }
+    
+    .cliente360-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .cliente360-actions {
+        width: 100%;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+}
+
+/* Empty State */
+.cliente360-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--neutral-medium);
+}
+
+.cliente360-empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.cliente360-empty-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+

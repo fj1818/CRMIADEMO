@@ -1,0 +1,42 @@
+/**
+ * ============================================
+ * COMPONENTE DE MENSAJE DE CONSTRUCCIÓN
+ * ============================================
+ */
+
+.construction-message {
+    background-color: var(--white);
+    padding: var(--spacing-3xl) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    max-width: 600px;
+    margin: var(--spacing-3xl) auto;
+}
+
+.construction-icon {
+    font-size: 5rem;
+    margin-bottom: var(--spacing-lg);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.construction-message h2 {
+    color: var(--primary-orange);
+    font-size: var(--font-3xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.construction-message p {
+    color: var(--gray-500);
+    font-size: var(--font-lg);
+}
+

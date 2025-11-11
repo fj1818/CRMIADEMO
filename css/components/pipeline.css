@@ -1,0 +1,1137 @@
+/**
+ * CSS para Pipeline de Ventas
+ * Tubería visual de oportunidades
+ */
+
+/* Contenedor Principal del Pipeline */
+.pipeline-container {
+    margin-bottom: var(--spacing-xl);
+}
+
+.pipeline-funnels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 24px;
+}
+
+.pipeline-funnel-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 28px;
+    box-shadow: 0 24px 45px rgba(15, 36, 71, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pipeline-funnel-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pipeline-funnel-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #1e2a3b;
+}
+
+.pipeline-funnel-card-header span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #66758f;
+}
+
+.funnel-chart {
+    width: 100%;
+    height: 360px;
+}
+
+@media (max-width: 768px) {
+    .pipeline-funnel-card {
+        padding: 24px 20px;
+    }
+
+    .funnel-chart {
+        height: 300px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .pipeline-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .pipeline-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .pipeline-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .pipeline-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .pipeline-count {
+        font-size: 28px;
+    }
+    
+    .pipeline-monto {
+        font-size: 14px;
+    }
+}
+
+/* ============================================ */
+/* MODAL DE OPORTUNIDAD - DISEÑO MEJORADO */
+/* ============================================ */
+
+/* Overlay */
+.oportunidad-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    padding: 10px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Container */
+.oportunidad-modal {
+    background: #FFFFFF;
+    border-radius: 16px;
+    width: calc(100% - 20px);
+    max-width: none;
+    max-height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease-out;
+    overflow: hidden;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header del Modal */
+.oportunidad-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    background: linear-gradient(135deg, #FF8800 0%, #FF6600 100%);
+    color: white;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.oportunidad-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.oportunidad-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.oportunidad-modal-title h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.oportunidad-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.oportunidad-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: white;
+    border: 2px solid #E8ECF0;
+    color: #7F8C9A;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.oportunidad-modal-close:hover {
+    background: #FF4444;
+    color: white;
+    border-color: #FF4444;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.4);
+}
+
+/* Body del Modal */
+.oportunidad-modal-body {
+    padding: 20px 32px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    background: #F7F9FB;
+}
+
+/* Scroll personalizado */
+.oportunidad-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.oportunidad-modal-body::-webkit-scrollbar-track {
+    background: #E8ECF0;
+    border-radius: 4px;
+}
+
+.oportunidad-modal-body::-webkit-scrollbar-thumb {
+    background: #FF8800;
+    border-radius: 4px;
+}
+
+.oportunidad-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #FF6600;
+}
+
+/* Métricas Principales */
+.oportunidad-metrics {
+    display: none;
+}
+
+/* Notas y comentarios */
+.notas-card {
+    margin-top: 24px;
+}
+
+.notas-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.notas-textarea {
+    width: 100%;
+    min-height: 90px;
+    border: 1px solid #E8ECF0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.notas-textarea:focus {
+    border-color: #FF8800;
+    box-shadow: 0 0 0 3px rgba(255, 136, 0, 0.12);
+    outline: none;
+}
+
+.notas-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.notas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nota-item {
+    border: 1px solid #E8ECF0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    background: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nota-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7F8C9A;
+    margin-bottom: 8px;
+}
+
+.nota-meta-update {
+    color: #FF8800;
+}
+
+.nota-texto {
+    font-size: 14px;
+    color: #2C3E50;
+    white-space: pre-wrap;
+}
+
+.nota-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.nota-actions button {
+    border: none;
+    background: none;
+    color: #FF8800;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.nota-actions button:hover {
+    color: #FF6600;
+    text-decoration: underline;
+}
+
+/* Información de Campaña */
+.campania-card {
+    background: #fff8ef;
+    border: 1px solid rgba(255, 136, 0, 0.25);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(255, 136, 0, 0.18);
+}
+
+.campania-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, rgba(255, 136, 0, 0.12) 0%, rgba(255, 136, 0, 0.05) 100%);
+    border-bottom: 1px solid rgba(255, 136, 0, 0.2);
+}
+
+.campania-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #9A4B00;
+}
+
+.campania-card-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(154, 75, 0, 0.7);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.campania-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffdda1 0%, #ffaf5f 100%);
+    font-size: 22px;
+}
+
+.campania-card-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.campania-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2C3E50;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.campania-heading {
+    font-weight: 700;
+    color: #9A4B00;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.campania-heading-icon {
+    font-size: 16px;
+}
+
+.campania-subheading {
+    font-weight: 700;
+    color: #D96422;
+    margin-top: 6px;
+}
+
+.campania-text {
+    margin: 0;
+}
+
+.campania-list {
+    list-style: none;
+    padding-left: 18px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.campania-list li::before {
+    content: '•';
+    margin-right: 6px;
+    color: #FF8800;
+    font-weight: 700;
+}
+
+.campania-highlight {
+    background: rgba(255, 136, 0, 0.12);
+    border: 1px dashed rgba(255, 136, 0, 0.4);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-weight: 600;
+    color: #9A4B00;
+}
+
+.campania-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+}
+
+.campania-detail-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 136, 0, 0.18);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(255, 136, 0, 0.12);
+}
+
+.campania-detail-icon {
+    font-size: 20px;
+}
+
+.campania-detail-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(42, 53, 72, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.campania-detail-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #2C3E50;
+}
+
+/* Pestañas Principales del Modal */
+.modal-main-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #E8ECF0;
+    padding-bottom: 0;
+}
+
+.modal-main-tab {
+    padding: 14px 28px;
+    border: none;
+    background: transparent;
+    color: #7F8C9A;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    bottom: -2px;
+}
+
+.modal-main-tab:hover {
+    color: #FF8800;
+    background: rgba(255, 136, 0, 0.05);
+}
+
+.modal-main-tab.active {
+    color: #FF8800;
+    border-bottom-color: #FF8800;
+    font-weight: 700;
+}
+
+.modal-main-tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-main-tab-content.active {
+    display: block;
+}
+
+.metric-card-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.metric-card-modal:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-color: #FF8800;
+}
+
+.metric-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.metric-info {
+    flex: 1;
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2C3E50;
+    line-height: 1.2;
+    margin-bottom: 4px;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #7F8C9A;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid de 3 columnas */
+.oportunidad-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Cards de Información */
+.oportunidad-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.oportunidad-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: #FFE4CC;
+}
+
+.oportunidad-card-header {
+    background: linear-gradient(135deg, #F7F9FB 0%, #E8ECF0 100%);
+    padding: 12px 16px;
+    border-bottom: 2px solid #E8ECF0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-header-icon {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.oportunidad-card-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2C3E50;
+}
+
+.oportunidad-card-body {
+    padding: 16px;
+}
+
+/* Filas de Información */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #E8ECF0;
+    gap: 16px;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 13px;
+    color: #7F8C9A;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.info-value {
+    font-size: 14px;
+    color: #2C3E50;
+    font-weight: 500;
+    text-align: right;
+    word-break: break-word;
+}
+
+.info-value.info-small {
+    font-size: 12px;
+}
+
+.info-value.info-large {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FF8800;
+}
+
+.info-value.info-highlight {
+    color: #FF8800;
+    font-weight: 700;
+}
+
+/* Footer del Modal */
+.oportunidad-modal-footer {
+    padding: 16px 32px;
+    background: white;
+    border-top: 2px solid #E8ECF0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.oportunidad-modal-footer .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+}
+
+.oportunidad-modal-footer .btn-secondary {
+    background: #E8ECF0;
+    color: #2C3E50;
+}
+
+.oportunidad-modal-footer .btn-secondary:hover {
+    background: #D5DBE0;
+    transform: translateX(-2px);
+}
+
+.oportunidad-modal-footer .btn-primary {
+    background: linear-gradient(135deg, #FF8800 0%, #FF6600 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.3);
+    border: none !important;
+}
+
+.oportunidad-modal-footer .btn-primary:hover {
+    background: linear-gradient(135deg, #FF8800 0%, #FF6600 100%) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 136, 0, 0.4);
+}
+
+.oportunidad-modal-footer .btn-success {
+    background: linear-gradient(135deg, #00CCA3 0%, #00A383 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 204, 163, 0.3);
+}
+
+.oportunidad-modal-footer .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 204, 163, 0.4);
+}
+
+/* Sección de Contacto Cliente */
+.contact-section {
+    background: white;
+    border: 2px solid #E8ECF0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-right: 60px;
+}
+
+.contact-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Botones de Contacto */
+.contact-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    color: white;
+}
+
+.contact-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.contact-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.contact-btn-whatsapp {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+}
+
+.contact-btn-call {
+    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+}
+
+.contact-btn-email {
+    background: linear-gradient(135deg, #EA4335 0%, #C5221F 100%);
+}
+
+/* Sección de Productos */
+.productos-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.productos-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #E8ECF0;
+}
+
+.productos-section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2C3E50;
+}
+
+.productos-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: #F7F9FB;
+    padding: 6px;
+    border-radius: 10px;
+}
+
+.productos-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: #7F8C9A;
+    font-weight: 600;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.productos-tab:hover {
+    background: rgba(255, 136, 0, 0.1);
+    color: #FF8800;
+}
+
+.productos-tab.active {
+    background: white;
+    color: #FF8800;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.productos-tab-content {
+    display: none;
+}
+
+.productos-tab-content.active {
+    display: block;
+}
+
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.producto-item {
+    background: #F7F9FB;
+    border: 2px solid #E8ECF0;
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.producto-item:hover {
+    border-color: #FF8800;
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.15);
+}
+
+.producto-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+}
+
+.producto-item-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin: 0;
+}
+
+.producto-item-family {
+    font-size: 11px;
+    color: #7F8C9A;
+    margin-top: 4px;
+}
+
+.producto-item-monto {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FF8800;
+    margin-top: 8px;
+}
+
+.producto-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #E8ECF0;
+    font-size: 12px;
+}
+
+.producto-item-detail {
+    display: flex;
+    justify-content: space-between;
+    color: #7F8C9A;
+}
+
+.producto-item-detail strong {
+    color: #2C3E50;
+}
+
+.producto-no-contratado {
+    background: #FFFFFF;
+    border: 2px dashed #E8ECF0;
+    opacity: 0.8;
+}
+
+.producto-no-contratado:hover {
+    opacity: 1;
+    border-color: #0088FF;
+    box-shadow: 0 4px 12px rgba(0, 136, 255, 0.15);
+}
+
+.producto-recomenado-card {
+    background: linear-gradient(135deg, #FFE4CC 0%, #FFB366 100%);
+    border: 3px solid #FF8800;
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.producto-recomenado-card::before {
+    content: '⭐';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 80px;
+    opacity: 0.2;
+}
+
+.producto-recomendado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: #FF8800;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.producto-recomendado-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2C3E50;
+    margin: 0 0 8px 0;
+}
+
+.producto-recomendado-subtitle {
+    font-size: 14px;
+    color: #7F8C9A;
+    margin-bottom: 16px;
+}
+
+.producto-recomendado-monto {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FF8800;
+    margin-bottom: 16px;
+}
+
+.producto-recomendado-reason {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #2C3E50;
+    margin-bottom: 16px;
+}
+
+.producto-recomendado-action {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-crear-oportunidad {
+    flex: 1;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #FF8800 0%, #FF6600 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.3);
+}
+
+.btn-crear-oportunidad:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 136, 0, 0.4);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #7F8C9A;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.empty-state-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .oportunidad-grid-3col {
+        grid-template-columns: 1fr;
+    }
+    
+    .oportunidad-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .oportunidad-modal {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        max-height: 100vh;
+    }
+    
+    .oportunidad-modal-header {
+        padding: 20px;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .oportunidad-modal-header > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .contact-buttons {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .contact-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .contact-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .oportunidad-modal-title h2 {
+        font-size: 18px;
+    }
+    
+    .oportunidad-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+    }
+    
+    .oportunidad-modal-body {
+        padding: 20px;
+    }
+    
+    .oportunidad-metrics {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .metric-card-modal {
+        padding: 16px;
+    }
+    
+    .productos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .productos-tabs {
+        flex-direction: column;
+    }
+    
+    .oportunidad-modal-footer {
+        padding: 16px 20px;
+        flex-direction: column-reverse;
+    }
+    
+    .oportunidad-modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

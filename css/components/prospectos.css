@@ -1,0 +1,580 @@
+/* Las tarjetas KPI se reutilizan después de los embudos */
+
+.kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #6b7a90;
+    letter-spacing: 0.4px;
+}
+
+.kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.kpi-value--success {
+    color: #1dac7d;
+}
+
+.kpi-value--warning {
+    color: #d96f40;
+}
+
+.kpi-sub {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7a90;
+}
+
+/* ============================== */
+/* MODAL DE PROSPECTO             */
+/* ============================== */
+
+.prospecto-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 12000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.prospecto-modal {
+    width: min(1200px, 100%);
+    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 40px 70px rgba(15, 36, 71, 0.25);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: prospectoModalIn 0.35s ease-out;
+}
+
+@keyframes prospectoModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.prospecto-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    border: none;
+    background: rgba(239, 244, 255, 0.9);
+    color: #1f2a44;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.prospecto-modal-close:hover {
+    background: #ff6b6b;
+    color: #ffffff;
+}
+
+.prospecto-modal-header {
+    padding: 28px 36px 24px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f2f6ff 100%);
+    border-bottom: 1px solid rgba(15, 36, 71, 0.06);
+}
+
+.prospecto-modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.prospecto-modal-subtitle {
+.prospecto-modal-subtitle {
+    margin: 8px 0 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b7a90;
+}
+
+.prospecto-modal-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prospecto-modal-body {
+    padding: 24px 36px 32px 36px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.prospecto-stage-wrapper {
+    background: #ffffff;
+    border: 1px solid rgba(15, 36, 71, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 12px 24px rgba(15, 36, 71, 0.08);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.prospecto-stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.prospecto-stage-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.prospecto-stage-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(34, 114, 255, 0.12);
+    color: #1f2a44;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.prospecto-funnel-track {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(34, 114, 255, 0.12);
+    background: #eef2fb;
+}
+
+.prospecto-funnel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.prospecto-funnel-track::-webkit-scrollbar-thumb {
+    background: rgba(34, 114, 255, 0.25);
+    border-radius: 999px;
+}
+
+.prospecto-funnel-track::-webkit-scrollbar-thumb:hover {
+    background: rgba(34, 114, 255, 0.4);
+}
+
+.prospecto-funnel-segment {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 22px;
+    position: relative;
+    background: var(--segment-bg, #f9fbff);
+    color: var(--segment-text, #1f2a44);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.prospecto-funnel-segment + .prospecto-funnel-segment {
+    border-left: 1px solid rgba(34, 114, 255, 0.08);
+}
+
+.prospecto-funnel-segment::after {
+    content: '';
+    position: absolute;
+    right: -18px;
+    top: 0;
+    width: 18px;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(34, 114, 255, 0.12) 0%, rgba(34, 114, 255, 0) 100%);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.prospecto-funnel-segment.last::after {
+    display: none;
+}
+
+.prospecto-funnel-segment.completed {
+    --segment-bg: #e9f7ef;
+    --segment-text: #1f5133;
+}
+
+.prospecto-funnel-segment.current {
+    --segment-bg: #2272ff;
+    --segment-text: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+.prospecto-funnel-segment.descartado {
+    --segment-bg: #fdecea;
+    --segment-text: #7f1d1d;
+}
+
+.prospecto-funnel-segment.upcoming {
+    --segment-bg: #f4f6fc;
+    --segment-text: rgba(31, 42, 68, 0.65);
+}
+
+.funnel-segment-index {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    color: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+}
+
+.funnel-segment-name {
+    white-space: nowrap;
+    color: inherit;
+}
+
+.funnel-step-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.funnel-step-index {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    color: #1f2a44;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.funnel-step-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.funnel-step-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2a44;
+    letter-spacing: 0.3px;
+}
+
+.funnel-step-status {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: rgba(31, 42, 68, 0.65);
+}
+
+.prospecto-modal .oportunidad-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.prospecto-modal-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.prospecto-modal-body::-webkit-scrollbar-track {
+    background: #edf0f7;
+    border-radius: 999px;
+}
+
+.prospecto-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #2272ff 0%, #00c2ff 100%);
+    border-radius: 999px;
+}
+
+.prospecto-contact-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(34, 114, 255, 0.08) 0%, rgba(0, 194, 255, 0.08) 100%);
+    border: 1px solid rgba(34, 114, 255, 0.12);
+}
+
+.prospecto-contact-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.prospecto-contact-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #2272ff;
+    box-shadow: 0 12px 24px rgba(34, 114, 255, 0.15);
+}
+
+.prospecto-contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.prospecto-contact-details h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.prospecto-contact-details span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #51627a;
+}
+
+.prospecto-contact-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.prospecto-contact-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 12px 28px rgba(15, 36, 71, 0.12);
+}
+
+.prospecto-contact-actions a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(15, 36, 71, 0.2);
+    filter: brightness(1.05);
+}
+
+.prospecto-contact-actions a.contact-whatsapp {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+}
+
+.prospecto-contact-actions a.contact-call {
+    background: linear-gradient(135deg, #2272ff 0%, #1857c9 100%);
+}
+
+.prospecto-contact-actions a.contact-mail {
+    background: linear-gradient(135deg, #FF6B6B 0%, #ff3f3f 100%);
+}
+
+.contact-action-icon {
+    font-size: 16px;
+}
+
+.prospecto-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.prospecto-info-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 36, 71, 0.06);
+    box-shadow: 0 12px 24px rgba(38, 80, 120, 0.08);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prospecto-info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(135deg, #2272ff 0%, #00c2ff 50%, rgba(255, 255, 255, 0) 100%);
+}
+
+.prospecto-info-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(15, 36, 71, 0.16);
+}
+
+.prospecto-info-card h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.prospecto-info-card .info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 13px;
+    color: #1f2a44;
+}
+
+.prospecto-info-card .info-row span:first-child {
+    font-weight: 600;
+    color: #6b7a90;
+}
+
+.info-highlight {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.info-caption {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7a90;
+}
+
+.info-empty {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7a90;
+}
+
+@media (max-width: 992px) {
+    .prospect-stage::after {
+        display: none;
+    }
+
+    .prospect-stage {
+        border-radius: 16px;
+    }
+
+    .prospecto-modal {
+        max-height: 92vh;
+    }
+
+    .prospecto-modal-body {
+        padding: 20px;
+    }
+
+    .prospecto-stage-wrapper {
+        padding: 18px;
+    }
+
+    .prospecto-funnel-track {
+        flex-wrap: wrap;
+        border-radius: 14px;
+    }
+
+    .prospecto-funnel-segment {
+        flex: 1 1 50%;
+        min-width: 220px;
+    }
+
+    .prospecto-funnel-segment::after {
+        display: none;
+    }
+
+    .prospecto-modal .oportunidad-metrics {
+        grid-template-columns: repeat(2, minmax(200px, 1fr));
+    }
+
+    .prospecto-contact-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .prospecto-contact-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 600px) {
+    .prospecto-funnel-track {
+        flex-direction: column;
+    }
+
+    .prospecto-funnel-segment {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .prospecto-stage-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .prospecto-modal .oportunidad-metrics {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .prospecto-contact-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .prospecto-contact-actions a {
+        justify-content: center;
+    }
+}
+

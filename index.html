@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM - Sistema de Gestión</title>
+
+    <!-- Librerías externas -->
+    <link rel="stylesheet" href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css">
+    <link rel="stylesheet" href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css">
+
+    <!-- Estilos CSS Modulares -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components/mis-acciones.css">
+    <link rel="stylesheet" href="css/components/inicio-dashboard.css">
+</head>
+
+<body>
+    <!-- ============================================
+         BARRA DE NAVEGACIÓN PRINCIPAL
+         ============================================ -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <div class="logo">
+                <span class="logo-text">CRM</span>
+            </div>
+
+            <!-- Menú de navegación -->
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-section="inicio">
+                        <span class="nav-icon">🏠</span>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="prospectos">
+                        <span class="nav-icon">👥</span>
+                        <span>Prospectos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="oportunidades">
+                        <span class="nav-icon">💼</span>
+                        <span>Oportunidades</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="mi-cartera">
+                        <span class="nav-icon">📊</span>
+                        <span>Mi Cartera</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-section="mis-acciones">
+                        <span class="nav-icon">📋</span>
+                        <span>Mis Acciones</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Perfil de usuario -->
+            <div class="user-menu">
+                <div class="user-profile">
+                    <span class="user-avatar">👤</span>
+                    <span class="user-name">Juan Pérez</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         CONTENEDOR PRINCIPAL
+         ============================================ -->
+    <main class="main-container">
+
+        <!-- SECCIÓN: INICIO -->
+        <section id="inicio" class="content-section active"></section>
+
+        <!-- SECCIÓN: PROSPECTOS -->
+        <section id="prospectos" class="content-section">
+            <div class="section-header">
+                <h1>Prospectos</h1>
+                <p class="section-subtitle">Gestión de clientes potenciales y conversión</p>
+            </div>
+            <div id="prospectos-pipeline" class="prospectos-pipeline"></div>
+            <div id="tabla-prospectos"></div>
+        </section>
+
+        <!-- SECCIÓN: OPORTUNIDADES -->
+        <section id="oportunidades" class="content-section">
+            <div class="section-header">
+                <h1>Tubería de Ventas</h1>
+                <p class="section-subtitle">Pipeline de oportunidades de negocio</p>
+            </div>
+            
+            <!-- Pipeline Visual -->
+            <div id="pipeline-ventas" class="pipeline-container"></div>
+            
+            <!-- Tabla de Oportunidades -->
+            <div id="tabla-oportunidades"></div>
+        </section>
+
+        <!-- SECCIÓN: MI CARTERA -->
+        <section id="mi-cartera" class="content-section">
+            <div class="section-header">
+                <h1>Mi Cartera</h1>
+                <p class="section-subtitle">Análisis de tu cartera de clientes</p>
+            </div>
+            
+            <!-- Tarjetas de estadísticas -->
+            <div id="mi-cartera-stats" class="stats-grid"></div>
+            
+            <!-- Tabla de clientes -->
+            <div id="tabla-clientes"></div>
+        </section>
+
+        <!-- SECCIÓN: MIS ACCIONES -->
+        <section id="mis-acciones" class="content-section">
+            <div class="section-header">
+                <h1>Mis Acciones</h1>
+                <p class="section-subtitle">Tareas y actividades pendientes</p>
+            </div>
+            <div class="construction-message">
+                <div class="construction-icon">🚧</div>
+                <h2>Sección en Construcción</h2>
+                <p>Estamos trabajando para brindarte la mejor experiencia</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================
+         SCRIPTS JAVASCRIPT MODULARES
+         ============================================ -->
+
+    <!-- Librería AnyChart -->
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-pyramid-funnel.min.js"></script>
+
+    <!-- 1. Archivos de configuración -->
+    <script src="config/config.js"></script>
+    <script src="config/routes.js"></script>
+    
+        <!-- 2. Datos -->
+        <script src="js/data/clientes.js"></script>
+        <script src="js/data/productos.js"></script>
+        <script src="js/data/oportunidades.js"></script>
+        <script src="js/data/prospectos.js"></script>
+        <script src="js/data/acciones.js"></script>
+    
+    <!-- 3. Utilidades -->
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/validators.js"></script>
+    
+    <!-- 4. Componentes -->
+    <script src="js/components/MultiSelect.js"></script>
+    <script src="js/components/TableComponent.js"></script>
+    
+    <!-- 5. Módulos de secciones -->
+    <script src="js/modules/navigation.js"></script>
+    <script src="js/modules/inicio.js"></script>
+    <script src="js/modules/prospectos.js"></script>
+    <script src="js/modules/oportunidades.js"></script>
+    <script src="js/modules/miCartera.js"></script>
+    <script src="js/modules/misAcciones.js"></script>
+    
+    <!-- 6. Aplicación principal (debe ir al final) -->
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>

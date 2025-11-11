@@ -1,0 +1,255 @@
+.acciones-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.acciones-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.acciones-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.acciones-subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #6b7a90;
+}
+
+.acciones-kpis {
+    display: flex;
+    gap: 16px;
+}
+
+.acciones-kpi-card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 36, 71, 0.08);
+    box-shadow: 0 8px 20px rgba(15, 36, 71, 0.08);
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.acciones-kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.acciones-kpi-value.acciones-kpi-success {
+    color: #FF8800;
+}
+
+.acciones-kpi-value.acciones-kpi-info {
+    color: #2272ff;
+}
+
+.acciones-kpi-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6b7a90;
+    letter-spacing: 0.4px;
+}
+
+.acciones-panel,
+.agenda-panel {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 36, 71, 0.06);
+    box-shadow: 0 12px 28px rgba(38, 80, 120, 0.08);
+    padding: 24px;
+}
+
+.acciones-panel-header,
+.agenda-panel-header {
+    margin-bottom: 16px;
+}
+
+.acciones-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.acciones-add-btn {
+    border: none;
+    background: linear-gradient(135deg, #2272ff 0%, #1857c9 100%);
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.acciones-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(34, 114, 255, 0.25);
+}
+
+.acciones-panel-header h3,
+.agenda-panel-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.acciones-panel-header p,
+.agenda-panel-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #6b7a90;
+}
+
+.acciones-task {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.acciones-task-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.acciones-task-name {
+    font-weight: 600;
+    color: #1f2a44;
+}
+
+.acciones-task-desc {
+    font-size: 12px;
+    color: #6b7a90;
+}
+
+.acciones-link {
+    color: #2272ff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.acciones-link:hover {
+    text-decoration: underline;
+}
+
+.agenda-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.agenda-day {
+    border-radius: 16px;
+    border: 1px solid rgba(34, 114, 255, 0.12);
+    background: #f8faff;
+    padding: 18px 20px;
+}
+
+.agenda-day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.agenda-day-date {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.agenda-day-count {
+    font-size: 12px;
+    color: #2272ff;
+    font-weight: 600;
+}
+
+.agenda-event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.agenda-event {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-radius: 14px;
+    background: #ffffff;
+    border: 1px solid rgba(34, 114, 255, 0.12);
+    box-shadow: 0 6px 16px rgba(34, 114, 255, 0.1);
+}
+
+.agenda-event-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.agenda-event-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1f2a44;
+}
+
+.agenda-event-time {
+    font-size: 12px;
+    color: #6b7a90;
+    margin: 2px 0 6px;
+}
+
+.agenda-event-desc {
+    font-size: 13px;
+    color: #1f2a44;
+}
+
+.agenda-event-tag {
+    display: inline-flex;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(34, 114, 255, 0.12);
+    color: #2272ff;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.agenda-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7a90;
+}
+
+.agenda-empty-icon {
+    font-size: 42px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 992px) {
+    .acciones-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .acciones-kpis {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .acciones-kpi-card {
+        flex: 1 1 140px;
+    }
+}

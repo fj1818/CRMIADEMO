@@ -1,0 +1,61 @@
+/**
+ * ============================================
+ * RESET Y CONFIGURACIÓN BASE
+ * ============================================
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--gray-100);
+    color: var(--black);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reset de listas */
+ul, ol {
+    list-style: none;
+}
+
+/* Reset de enlaces */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Reset de botones */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* Reset de inputs */
+input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    outline: none;
+}
+
+/* Imágenes responsive */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
