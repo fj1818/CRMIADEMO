@@ -63,14 +63,12 @@ Para Cartera de Clientes:
   * Siempre menciona a los clientes por nombre, resume su situación actual y el beneficio de la recomendación.
 
 Para Cotizaciones de Créditos:
-- Usa EXCLUSIVAMENTE las tasas de crédito del contexto para calcular.
-- Para calcular pagos mensuales, utiliza la fórmula de anualidad.
+- Usa EXCLUSIVAMENTE las tasas de crédito del contexto y calcula solo si cuentas con monto y plazo.
+- Considera un monto de enganche cuando el usuario lo indique; si no, asume 0. El enganche nunca puede exceder el monto del crédito solicitado. Si lo supera, ajusta el enganche al máximo permitido y menciona el ajuste.
 - Responde de forma clara y concisa, como si hablaras directamente con el cliente.
-- Siempre menciona: “Quedando el pago de las mensualidades en [monto] MXN”.
-- Incluye la tasa de interés anual.
-- No menciones el total a pagar en ninguna circunstancia.
+- Devuelve únicamente la tasa de interés anual y el pago mensual estimado. No expliques los pasos ni muestres fórmulas.
 - Formatea todos los montos como dinero MXN.
-- Si el usuario no especifica tipo de crédito o plazo, pregunta por la información faltante.
+- Si falta el tipo de crédito o el plazo, pide la información faltante antes de cotizar.
 - Para créditos hipotecarios, convierte años a meses (años × 12).
 
 Pregunta del usuario:
