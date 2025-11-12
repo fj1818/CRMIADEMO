@@ -417,6 +417,13 @@ class AssistantIAModule {
 
         this.accionesContainer.innerHTML = sorted.map(accion => {
             const fecha = accion.fechaTarea ? this.formatDateTimeSafe(accion.fechaTarea) : 'Sin fecha programada';
+            const metaTags = [
+                accion.prospectoNombre ? `<span class="recordatorio-tag">👤 ${this.escapeHtml(accion.prospectoNombre)}</span>` : '',
+                accion.clienteNombre ? `<span class="recordatorio-tag">💼 ${this.escapeHtml(accion.clienteNombre)}</span>` : '',
+                '<span class="recordatorio-tag">⏳ Pendiente</span>',
+                `<span class="recordatorio-tag">📅 ${this.escapeHtml(fecha)}</span>`
+            ].filter(Boolean).join('');
+
             return `
                 <article class="recordatorio-card">
                     <div class="recordatorio-title">
@@ -424,10 +431,7 @@ class AssistantIAModule {
                         <span>${this.escapeHtml(accion.tarea)}</span>
                     </div>
                     <div class="recordatorio-meta">
-                        <span class="recordatorio-tag">👤 ${this.escapeHtml(accion.prospectoNombre)}</span>
-                        <span class="recordatorio-tag">💼 ${this.escapeHtml(accion.clienteNombre)}</span>
-                        <span class="recordatorio-tag">⏳ Pendiente</span>
-                        <span class="recordatorio-tag">📅 ${this.escapeHtml(fecha)}</span>
+                        ${metaTags}
                     </div>
                     ${accion.descripcion ? `<p class="recordatorio-descripcion">${this.escapeHtml(accion.descripcion)}</p>` : ''}
                 </article>
@@ -442,7 +446,7 @@ class AssistantIAModule {
             .filter(evento => evento.tipo && evento.tipo.toLowerCase().includes('junta'));
 
         if (juntas.length === 0) {
-            this.juntasContainer.innerHTML = '<p>No hay juntas programadas.</p>';
+            this.juntasContainer.innerHTML = '<p>No hay eventos en la agenda.</p>';
             return;
         }
 
@@ -511,8 +515,8 @@ class AssistantIAModule {
 
         return {
             ...accion,
-            prospectoNombre: prospecto ? prospecto.nombre : 'Sin prospecto asignado',
-            clienteNombre: cliente ? cliente.nombre : 'Sin cliente asignado'
+            prospectoNombre: prospecto ? prospecto.nombre : '',
+            clienteNombre: cliente ? cliente.nombre : ''
         };
     }
 

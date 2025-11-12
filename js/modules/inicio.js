@@ -241,37 +241,61 @@ class InicioModule {
 
     renderMetasComerciales(metas) {
         const metasLista = Array.isArray(metas) ? metas : [];
+        const metasColocacion = metasLista.filter(meta => meta.categoria === 'colocacion');
+        const metasCaptacion = metasLista.filter(meta => meta.categoria === 'captacion');
+
+        const renderTabla = (titulo, datos) => {
+            if (!datos.length) {
+                return `
+                    <div class="inicio-dashboard__meta-group">
+                        <h3 class="inicio-dashboard__meta-group-title">${titulo}</h3>
+                        <div class="inicio-dashboard__meta-empty">Sin metas configuradas.</div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="inicio-dashboard__meta-group">
+                    <h3 class="inicio-dashboard__meta-group-title">${titulo}</h3>
+                    <table class="inicio-dashboard__table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Objetivo</th>
+                                <th>Avance</th>
+                                <th>Progreso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${datos.map(meta => `
+                                <tr>
+                                    <td>${meta.label}</td>
+                                    <td>${meta.metaTexto}</td>
+                                    <td>${meta.avanceTexto}</td>
+                                    <td>
+                                        <div class="inicio-dashboard__meta-progress">
+                                            <div class="inicio-dashboard__meta-progress-bar inicio-dashboard__meta-progress-bar--${meta.estado}" style="width:${meta.progreso}%"></div>
+                                        </div>
+                                        <span class="inicio-dashboard__meta-progress-text">${meta.progreso.toFixed(0)}%</span>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+
         return `
             <div class="inicio-dashboard__card inicio-dashboard__card--full">
                 <div class="inicio-dashboard__card-header">
                     <div class="inicio-dashboard__card-icon">📌</div>
                     <span>Metas comerciales</span>
                 </div>
-                <table class="inicio-dashboard__table">
-                    <thead>
-                        <tr>
-                            <th>Meta</th>
-                            <th>Objetivo</th>
-                            <th>Avance</th>
-                            <th>Progreso</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${metasLista.map(meta => `
-                            <tr>
-                                <td>${meta.label}</td>
-                                <td>${meta.metaTexto}</td>
-                                <td>${meta.avanceTexto}</td>
-                                <td>
-                                    <div class="inicio-dashboard__meta-progress">
-                                        <div class="inicio-dashboard__meta-progress-bar inicio-dashboard__meta-progress-bar--${meta.estado}" style="width:${meta.progreso}%"></div>
-                                    </div>
-                                    <span class="inicio-dashboard__meta-progress-text">${meta.progreso.toFixed(0)}%</span>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                <div class="inicio-dashboard__meta-grid">
+                    ${renderTabla('Colocación', metasColocacion)}
+                    ${renderTabla('Captación', metasCaptacion)}
+                </div>
             </div>
         `;
     }
@@ -599,11 +623,11 @@ class InicioModule {
             .reduce((sum, o) => sum + (o.montoOportunidad || 0), 0);
 
         const configuracion = [
-            { clave: 'tpv', label: 'TPV colocadas', tipo: 'unidades', meta: 18, actual: tpvActual },
-            { clave: 'nomina', label: 'Programas de nómina activos', tipo: 'unidades', meta: 14, actual: nominaActual },
-            { clave: 'tdc', label: 'Tarjetas de crédito empresariales', tipo: 'unidades', meta: 26, actual: tarjetasActual },
-            { clave: 'montoColocado', label: 'Monto colocado (créditos)', tipo: 'moneda', meta: 8_000_000, actual: montoColocadoActual },
-            { clave: 'captacion', label: 'Captación cuentas de cheques', tipo: 'moneda', meta: 6_000_000, actual: captacionActual }
+            { clave: 'tdc', label: 'Tarjeta de crédito empresarial', tipo: 'unidades', meta: 26, actual: tarjetasActual, categoria: 'colocacion' },
+            { clave: 'montoColocado', label: 'Crédito empresarial', tipo: 'moneda', meta: 8_000_000, actual: montoColocadoActual, categoria: 'colocacion' },
+            { clave: 'tpv', label: 'Terminal punto de venta', tipo: 'unidades', meta: 18, actual: tpvActual, categoria: 'captacion' },
+            { clave: 'nomina', label: 'Servicios de nómina', tipo: 'unidades', meta: 14, actual: nominaActual, categoria: 'captacion' },
+            { clave: 'captacion', label: 'Cuenta de cheques empresarial', tipo: 'moneda', meta: 6_000_000, actual: captacionActual, categoria: 'captacion' }
         ];
 
         return configuracion.map(item => {

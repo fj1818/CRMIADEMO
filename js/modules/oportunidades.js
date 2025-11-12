@@ -11,6 +11,7 @@ class OportunidadesModule {
         this.container = null;
         this.oportunidades = [];
         this.tablaOportunidades = null;
+        this.recomendacionesContainer = null;
     }
 
     /**
@@ -24,6 +25,7 @@ class OportunidadesModule {
         }
         
         this.oportunidades = OportunidadesUtils.getTodos();
+        this.recomendacionesContainer = document.getElementById('oportunidades-recomendaciones');
         this.renderPipeline();
         this.inicializarTabla();
         
@@ -88,6 +90,7 @@ class OportunidadesModule {
 
         const totalOportunidades = estados.reduce((sum, estado) => sum + estado.count, 0);
         const totalMonto = estados.reduce((sum, estado) => sum + estado.monto, 0);
+        const oportunidadesPrioritarias = this.obtenerOportunidadesPrioritarias(3);
 
         pipelineContainer.innerHTML = `
             <div class="pipeline-funnels">
@@ -161,6 +164,71 @@ class OportunidadesModule {
 
         renderFunnel('funnel-oportunidades', countData, 'Distribución por etapas');
         renderFunnel('funnel-montos', montoData, 'Distribución por monto');
+        this.renderRecomendaciones();
+    }
+
+    obtenerOportunidadesPrioritarias(limit = 3) {
+        const abiertas = this.oportunidades.filter(o => o.estado === 'Abierta');
+        return [...abiertas]
+            .sort((a, b) => {
+                const probA = a.probabilidad || 0;
+                const probB = b.probabilidad || 0;
+                if (probA !== probB) return probB - probA;
+                const montoA = a.montoOportunidad || 0;
+                const montoB = b.montoOportunidad || 0;
+                if (montoA !== montoB) return montoB - montoA;
+                const fechaA = a.fechaCreacion ? new Date(a.fechaCreacion).getTime() : Number.MAX_SAFE_INTEGER;
+                const fechaB = b.fechaCreacion ? new Date(b.fechaCreacion).getTime() : Number.MAX_SAFE_INTEGER;
+                return fechaA - fechaB;
+            })
+            .slice(0, limit);
+    }
+
+    renderRecomendaciones() {
+        if (!this.recomendacionesContainer) return;
+
+        const escapeHtml = (str = '') => String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+        const oportunidadesPrioritarias = this.obtenerOportunidadesPrioritarias(3);
+
+        const contenido = oportunidadesPrioritarias.length ? `
+            <div class="recomendaciones-mini-card" style="background:#ffffff;border-radius:16px;padding:18px 22px;box-shadow:0 16px 32px rgba(255,136,0,0.18);min-width:280px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:15px;color:#3b2a14;">Oportunidades recomendadas a gestionar hoy</h3>
+                    <span style="font-size:20px;">🚀</span>
+                </div>
+                <p style="margin:0 0 12px 0;font-size:12px;color:#6f5b3e;">Priorizadas por probabilidad de cierre, monto y etapa comercial.</p>
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;">
+                    ${oportunidadesPrioritarias.map(item => `
+                        <li style="display:flex;flex-direction:column;gap:4px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:#3b2a14;">
+                                <span>${escapeHtml(item.nombreProducto)}</span>
+                                <span style="font-size:12px;color:#ff7a00;">🎯 ${item.probabilidad}%</span>
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#6f5b3e;">
+                                <span>💰 ${Helpers.formatCurrency(item.montoOportunidad || 0)}</span>
+                                <span>📊 ${escapeHtml(item.estadoVenta)}</span>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : `
+            <div class="recomendaciones-mini-card" style="background:#ffffff;border-radius:16px;padding:18px 22px;box-shadow:0 16px 32px rgba(255,136,0,0.18);min-width:280px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:15px;color:#3b2a14;">Oportunidades recomendadas a gestionar hoy</h3>
+                    <span style="font-size:20px;">✅</span>
+                </div>
+                <p style="margin:0;font-size:12px;color:#6f5b3e;">No hay oportunidades con seguimiento urgente para hoy.</p>
+            </div>
+        `;
+
+        this.recomendacionesContainer.innerHTML = contenido;
     }
 
     /**

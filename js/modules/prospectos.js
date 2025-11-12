@@ -11,6 +11,7 @@ class ProspectosModule {
         this.container = null;
         this.pipelineContainer = null;
         this.tableContainer = null;
+        this.recomendacionesContainer = null;
         this.prospectos = [];
         this.tablaProspectos = null;
         this.stages = window.ProspectosUtils ? ProspectosUtils.getStages() : [];
@@ -25,6 +26,7 @@ class ProspectosModule {
 
         this.pipelineContainer = document.getElementById('prospectos-pipeline');
         this.tableContainer = document.getElementById('tabla-prospectos');
+        this.recomendacionesContainer = document.getElementById('prospectos-recomendaciones');
 
         this.cargarDatos();
         this.renderPipeline();
@@ -77,7 +79,6 @@ class ProspectosModule {
 
         const totalProspectos = estados.reduce((sum, estado) => sum + estado.count, 0);
         const totalMonto = estados.reduce((sum, estado) => sum + estado.monto, 0);
-
         this.pipelineContainer.innerHTML = `
             <div class="pipeline-funnels">
                 <div class="pipeline-funnel-card">
@@ -150,6 +151,93 @@ class ProspectosModule {
 
         renderFunnel('prospectos-funnel-count', countData, 'Distribución por etapas');
         renderFunnel('prospectos-funnel-amount', montoData, 'Distribución por monto');
+        this.renderRecomendaciones();
+    }
+
+    obtenerProspectosPrioritarios(limit = 3) {
+        const stagePriority = {
+            'Interesado': 5,
+            'En consideración': 4,
+            'No localizado aún': 3,
+            'No contactado': 2,
+            'Convertido': 1,
+            'Descartado': 0
+        };
+
+        const hoy = Date.now();
+
+        const calcularDiasSinMovimiento = (prospecto) => {
+            const referencia = prospecto.fechaConversion || prospecto.fechaDescarte || prospecto.fechaAlta;
+            if (!referencia) return 0;
+            const diff = Math.max(0, hoy - new Date(referencia).getTime());
+            return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+        };
+
+        return [...this.prospectos]
+            .filter(prospecto => prospecto.estado !== 'Descartado' && !prospecto.convertido)
+            .sort((a, b) => {
+                const prioridadA = stagePriority[a.estado] || 0;
+                const prioridadB = stagePriority[b.estado] || 0;
+                if (prioridadA !== prioridadB) return prioridadB - prioridadA;
+                const montoA = a.monto || 0;
+                const montoB = b.monto || 0;
+                if (montoA !== montoB) return montoB - montoA;
+                const diasA = calcularDiasSinMovimiento(a);
+                const diasB = calcularDiasSinMovimiento(b);
+                return diasB - diasA;
+            })
+            .slice(0, limit)
+            .map(prospecto => ({
+                ...prospecto,
+                diasSinMovimiento: calcularDiasSinMovimiento(prospecto)
+            }));
+    }
+
+    renderRecomendaciones() {
+            if (!this.recomendacionesContainer) return;
+
+            const escapeHtml = (str = '') => String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            const prospectosPrioritarios = this.obtenerProspectosPrioritarios(3);
+
+            const contenido = prospectosPrioritarios.length ? `
+            <div class="recomendaciones-mini-card" style="background:#ffffff;border-radius:16px;padding:18px 22px;box-shadow:0 14px 28px rgba(34,114,255,0.12);min-width:260px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:15px;color:#1f2a44;">Prospectos recomendados a gestionar hoy</h3>
+                    <span style="font-size:20px;">📋</span>
+                </div>
+                <p style="margin:0 0 12px 0;font-size:12px;color:#5f6b83;">Priorizados por etapa comercial, monto estimado y tiempo sin gestión.</p>
+                <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;">
+                    ${prospectosPrioritarios.map(item => `
+                        <li style="display:flex;flex-direction:column;gap:4px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:#1f2a44;">
+                                <span>${escapeHtml(item.nombre)}</span>
+                                <span class="badge ${this.getEstadoBadge(item.estado)}">${escapeHtml(item.estado)}</span>
+                            </div>
+                            <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#5f6b83;">
+                                <span>💰 ${Helpers.formatCurrency(item.monto || 0)}</span>
+                                <span>⏳ ${item.diasSinMovimiento} ${item.diasSinMovimiento === 1 ? 'día' : 'días'} sin gestión</span>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : `
+            <div class="recomendaciones-mini-card" style="background:#ffffff;border-radius:16px;padding:18px 22px;box-shadow:0 14px 28px rgba(34,114,255,0.12);min-width:260px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                    <h3 style="margin:0;font-size:15px;color:#1f2a44;">Prospectos recomendados a gestionar hoy</h3>
+                    <span style="font-size:20px;">✅</span>
+                </div>
+                <p style="margin:0;font-size:12px;color:#5f6b83;">No hay prospectos pendientes con prioridad alta para hoy.</p>
+            </div>
+        `;
+
+        this.recomendacionesContainer.innerHTML = contenido;
     }
 
     inicializarTabla() {
@@ -194,8 +282,7 @@ class ProspectosModule {
             ],
             searchable: true,
             filterable: true,
-            filters: [
-                {
+            filters: [{
                     field: 'estado',
                     label: 'Estado del Prospecto',
                     options: this.stages.map(stage => ({ value: stage, label: stage }))
@@ -206,14 +293,12 @@ class ProspectosModule {
                     options: familias.map(familia => ({ value: familia, label: familia }))
                 },
             ],
-            actions: [
-                {
-                    name: 'ver',
-                    label: 'Editar prospecto',
-                    icon: '✏️',
-                    handler: (prospecto) => this.abrirModalProspecto(prospecto)
-                }
-            ]
+            actions: [{
+                name: 'ver',
+                label: 'Editar prospecto',
+                icon: '✏️',
+                handler: (prospecto) => this.abrirModalProspecto(prospecto)
+            }]
         });
 
         this.tablaProspectos.init();
@@ -232,114 +317,113 @@ class ProspectosModule {
     }
 
     abrirModalProspecto(prospecto) {
-        if (!Array.isArray(prospecto.notas)) {
-            prospecto.notas = [];
-        }
-
-        prospecto.notas = prospecto.notas.map(nota => {
-            const normalizada = { ...nota };
-            normalizada.id = normalizada.id || `nota-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-            normalizada.texto = normalizada.texto || '';
-            normalizada.fechaCreacion = normalizada.fechaCreacion || normalizada.fecha || new Date().toISOString();
-            normalizada.ultimaActualizacion = normalizada.ultimaActualizacion || normalizada.actualizadoEl || null;
-            return normalizada;
-        });
-
-        const notas = prospecto.notas;
-
-        const overlay = document.createElement('div');
-        overlay.className = 'oportunidad-modal-overlay prospecto-modal-overlay';
-
-        const currentStageIndex = this.stages.indexOf(prospecto.estado);
-        const funnelTrackInlineStyle = 'display:flex;align-items:stretch;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(34,114,255,0.12);background:#eef2fb;';
-
-        const getSegmentConfig = (status) => {
-            switch (status) {
-                case 'completed':
-                    return {
-                        background: '#e9f7ef',
-                        textColor: '#1f5133',
-                        borderColor: 'rgba(46, 204, 113, 0.35)',
-                        indexBg: 'rgba(46, 204, 113, 0.18)',
-                        arrowBg: 'linear-gradient(90deg, rgba(46, 204, 113, 0.25) 0%, rgba(46, 204, 113, 0) 100%)'
-                    };
-                case 'current':
-                    return {
-                        background: '#2272ff',
-                        textColor: '#FFFFFF',
-                        borderColor: 'rgba(34, 114, 255, 0.7)',
-                        indexBg: 'rgba(255, 255, 255, 0.25)',
-                        arrowBg: 'linear-gradient(90deg, rgba(34, 114, 255, 0.8) 0%, rgba(34, 114, 255, 0) 100%)'
-                    };
-                case 'descartado':
-                    return {
-                        background: '#fdecea',
-                        textColor: '#7f1d1d',
-                        borderColor: 'rgba(231, 76, 60, 0.45)',
-                        indexBg: 'rgba(231, 76, 60, 0.18)',
-                        arrowBg: 'linear-gradient(90deg, rgba(231, 76, 60, 0.3) 0%, rgba(231, 76, 60, 0) 100%)'
-                    };
-                case 'upcoming':
-                    return {
-                        background: '#f4f6fc',
-                        textColor: 'rgba(31, 42, 68, 0.65)',
-                        borderColor: 'rgba(31, 42, 68, 0.08)',
-                        indexBg: 'rgba(255, 255, 255, 0.55)',
-                        arrowBg: 'linear-gradient(90deg, rgba(31, 42, 68, 0.12) 0%, rgba(31, 42, 68, 0) 100%)'
-                    };
-                default:
-                    return {
-                        background: '#f9fbff',
-                        textColor: '#1f2a44',
-                        borderColor: 'rgba(34, 114, 255, 0.12)',
-                        indexBg: 'rgba(255, 255, 255, 0.6)',
-                        arrowBg: 'linear-gradient(90deg, rgba(34, 114, 255, 0.12) 0%, rgba(34, 114, 255, 0) 100%)'
-                    };
+            if (!Array.isArray(prospecto.notas)) {
+                prospecto.notas = [];
             }
-        };
 
-        const funnelSteps = this.stages.map((stage, index) => {
-            const statusClass = index < currentStageIndex
-                ? 'completed'
-                : index === currentStageIndex
-                    ? (stage === 'Descartado' ? 'descartado' : 'current')
-                    : 'upcoming';
-            const isLast = index === this.stages.length - 1;
-            const config = getSegmentConfig(statusClass);
-            const segmentStyle = [
-                'flex:1',
-                'display:flex',
-                'align-items:center',
-                'gap:12px',
-                'padding:12px 22px',
-                'position:relative',
-                'font-size:13px',
-                'font-weight:600',
-                'letter-spacing:0.3px',
-                `background:${config.background}`,
-                `color:${config.textColor}`,
-                !isLast ? `border-right:1px solid ${config.borderColor}` : ''
-            ].filter(Boolean).join(';');
+            prospecto.notas = prospecto.notas.map(nota => {
+                const normalizada = {...nota };
+                normalizada.id = normalizada.id || `nota-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+                normalizada.texto = normalizada.texto || '';
+                normalizada.fechaCreacion = normalizada.fechaCreacion || normalizada.fecha || new Date().toISOString();
+                normalizada.ultimaActualizacion = normalizada.ultimaActualizacion || normalizada.actualizadoEl || null;
+                return normalizada;
+            });
 
-            const indexStyle = [
-                'width:26px',
-                'height:26px',
-                'border-radius:50%',
-                `background:${config.indexBg}`,
-                `color:${config.textColor}`,
-                'font-size:13px',
-                'font-weight:700',
-                'display:flex',
-                'align-items:center',
-                'justify-content:center',
-                'box-shadow:inset 0 0 0 2px rgba(255, 255, 255, 0.4)'
-            ].join(';');
+            const notas = prospecto.notas;
 
-            const nameStyle = `white-space:nowrap;color:${config.textColor}`;
+            const overlay = document.createElement('div');
+            overlay.className = 'oportunidad-modal-overlay prospecto-modal-overlay';
 
-            const arrowStyle = `position:absolute;right:-18px;top:0;width:18px;height:100%;background:${config.arrowBg};clip-path:polygon(0 0, 100% 50%, 0 100%);`;
+            const currentStageIndex = this.stages.indexOf(prospecto.estado);
+            const funnelTrackInlineStyle = 'display:flex;align-items:stretch;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(34,114,255,0.12);background:#eef2fb;';
 
-            return `
+            const getSegmentConfig = (status) => {
+                switch (status) {
+                    case 'completed':
+                        return {
+                            background: '#e9f7ef',
+                            textColor: '#1f5133',
+                            borderColor: 'rgba(46, 204, 113, 0.35)',
+                            indexBg: 'rgba(46, 204, 113, 0.18)',
+                            arrowBg: 'linear-gradient(90deg, rgba(46, 204, 113, 0.25) 0%, rgba(46, 204, 113, 0) 100%)'
+                        };
+                    case 'current':
+                        return {
+                            background: '#2272ff',
+                            textColor: '#FFFFFF',
+                            borderColor: 'rgba(34, 114, 255, 0.7)',
+                            indexBg: 'rgba(255, 255, 255, 0.25)',
+                            arrowBg: 'linear-gradient(90deg, rgba(34, 114, 255, 0.8) 0%, rgba(34, 114, 255, 0) 100%)'
+                        };
+                    case 'descartado':
+                        return {
+                            background: '#fdecea',
+                            textColor: '#7f1d1d',
+                            borderColor: 'rgba(231, 76, 60, 0.45)',
+                            indexBg: 'rgba(231, 76, 60, 0.18)',
+                            arrowBg: 'linear-gradient(90deg, rgba(231, 76, 60, 0.3) 0%, rgba(231, 76, 60, 0) 100%)'
+                        };
+                    case 'upcoming':
+                        return {
+                            background: '#f4f6fc',
+                            textColor: 'rgba(31, 42, 68, 0.65)',
+                            borderColor: 'rgba(31, 42, 68, 0.08)',
+                            indexBg: 'rgba(255, 255, 255, 0.55)',
+                            arrowBg: 'linear-gradient(90deg, rgba(31, 42, 68, 0.12) 0%, rgba(31, 42, 68, 0) 100%)'
+                        };
+                    default:
+                        return {
+                            background: '#f9fbff',
+                            textColor: '#1f2a44',
+                            borderColor: 'rgba(34, 114, 255, 0.12)',
+                            indexBg: 'rgba(255, 255, 255, 0.6)',
+                            arrowBg: 'linear-gradient(90deg, rgba(34, 114, 255, 0.12) 0%, rgba(34, 114, 255, 0) 100%)'
+                        };
+                }
+            };
+
+            const funnelSteps = this.stages.map((stage, index) => {
+                        const statusClass = index < currentStageIndex ?
+                            'completed' :
+                            index === currentStageIndex ?
+                            (stage === 'Descartado' ? 'descartado' : 'current') :
+                            'upcoming';
+                        const isLast = index === this.stages.length - 1;
+                        const config = getSegmentConfig(statusClass);
+                        const segmentStyle = [
+                            'flex:1',
+                            'display:flex',
+                            'align-items:center',
+                            'gap:12px',
+                            'padding:12px 22px',
+                            'position:relative',
+                            'font-size:13px',
+                            'font-weight:600',
+                            'letter-spacing:0.3px',
+                            `background:${config.background}`,
+                            `color:${config.textColor}`, !isLast ? `border-right:1px solid ${config.borderColor}` : ''
+                        ].filter(Boolean).join(';');
+
+                        const indexStyle = [
+                            'width:26px',
+                            'height:26px',
+                            'border-radius:50%',
+                            `background:${config.indexBg}`,
+                            `color:${config.textColor}`,
+                            'font-size:13px',
+                            'font-weight:700',
+                            'display:flex',
+                            'align-items:center',
+                            'justify-content:center',
+                            'box-shadow:inset 0 0 0 2px rgba(255, 255, 255, 0.4)'
+                        ].join(';');
+
+                        const nameStyle = `white-space:nowrap;color:${config.textColor}`;
+
+                        const arrowStyle = `position:absolute;right:-18px;top:0;width:18px;height:100%;background:${config.arrowBg};clip-path:polygon(0 0, 100% 50%, 0 100%);`;
+
+                        return `
                 <div class="prospecto-funnel-segment ${statusClass} ${isLast ? 'last' : ''}" style="${segmentStyle}">
                     <span class="funnel-segment-index" style="${indexStyle}">${index + 1}</span>
                     <span class="funnel-segment-name" style="${nameStyle}">${stage}</span>
