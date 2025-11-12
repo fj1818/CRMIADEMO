@@ -118,7 +118,9 @@ Ofrece al cliente nuestro Crédito Hipotecario Premium con condiciones preferenc
         tasa: 35.0,
         idProspecto: "184123456789012325",
         estado: "Descartada",
-        estadoVenta: "No contactado"
+        estadoVenta: "No contactado",
+        motivoDescarte: "No cumple requisitos de buró de crédito",
+        descripcionDescarte: "Se detectaron atrasos recientes en el buró, lo que impide aprobar la línea de crédito personal."
     },
     {
         id: 7,
@@ -134,7 +136,9 @@ Ofrece al cliente nuestro Crédito Hipotecario Premium con condiciones preferenc
         tasa: 38.0,
         idProspecto: "184123456789012330",
         estado: "Descartada",
-        estadoVenta: "Interesado"
+        estadoVenta: "Interesado",
+        motivoDescarte: "Prefiere producto de la competencia",
+        descripcionDescarte: "El corporativo eligió una tarjeta empresarial con comisión anual cero ofrecida por un banco rival."
     },
 
     // Oportunidades Abiertas - En Fábrica y Formalización

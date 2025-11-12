@@ -103,6 +103,8 @@ const PROSPECTOS_DATA = [
         convertido: false,
         monto: 120000,
         fechaDescarte: '2025-06-30',
+        motivoDescarte: 'Capacidad de pago insuficiente',
+        descripcionDescarte: 'La empresa mantiene un flujo de efectivo limitado que no soporta el nuevo crédito solicitado.',
         idOportunidad: null
     },
     {
@@ -193,6 +195,8 @@ const PROSPECTOS_DATA = [
         convertido: false,
         monto: 45000,
         fechaDescarte: '2025-07-07',
+        motivoDescarte: 'Prefiere producto de la competencia',
+        descripcionDescarte: 'Aceptó una tarjeta con recompensas más alineadas a sus gastos personales ofrecida por otra institución.',
         idOportunidad: null
     }
 ];

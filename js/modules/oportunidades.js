@@ -5,6 +5,19 @@
  * Gestiona la sección de oportunidades de negocio y tubería de ventas
  */
 
+const MOTIVOS_DESCARTE_OPO = [
+    'Falta de solvencia',
+    'No cumple requisitos de buró de crédito',
+    'Prefiere producto de la competencia',
+    'Capacidad de pago insuficiente',
+    'Documentación incompleta',
+    'Ingresos no comprobables',
+    'Perfil de riesgo no aceptable',
+    'Plazo o condiciones no convenientes',
+    'Cambio en estrategia comercial',
+    'Otro'
+];
+
 class OportunidadesModule {
     constructor() {
         this.sectionId = 'oportunidades';
@@ -96,18 +109,25 @@ class OportunidadesModule {
             <div class="pipeline-funnels">
                 <div class="pipeline-funnel-card">
                     <div class="pipeline-funnel-card-header">
-                        <h3>Embudo por número de oportunidades</h3>
+                        <h3>Funnel por número de oportunidades</h3>
                         <span>Total: ${totalOportunidades} ${totalOportunidades === 1 ? 'oportunidad' : 'oportunidades'}</span>
                     </div>
                     <div id="funnel-oportunidades" class="funnel-chart"></div>
                 </div>
                 <div class="pipeline-funnel-card">
                     <div class="pipeline-funnel-card-header">
-                        <h3>Embudo por monto</h3>
+                        <h3>Funnel por monto</h3>
                         <span>Total: ${Helpers.formatCurrency(totalMonto)}</span>
                     </div>
                     <div id="funnel-montos" class="funnel-chart"></div>
                 </div>
+            </div>
+            <div class="pipeline-funnel-card pipeline-discard-card">
+                <div class="pipeline-funnel-card-header">
+                    <h3>Motivos de descarte</h3>
+                    <span>Total descartadas: ${stats.descartadas}</span>
+                </div>
+                <div id="oportunidades-discard-chart" class="discard-chart"></div>
             </div>
         `;
 
@@ -164,6 +184,53 @@ class OportunidadesModule {
 
         renderFunnel('funnel-oportunidades', countData, 'Distribución por etapas');
         renderFunnel('funnel-montos', montoData, 'Distribución por monto');
+
+        const descartesPorMotivo = this.oportunidades
+            .filter(o => o.estado === 'Descartada')
+            .reduce((acc, oportunidad) => {
+                const motivo = (oportunidad.motivoDescarte || 'Sin motivo registrado').trim() || 'Sin motivo registrado';
+                acc[motivo] = (acc[motivo] || 0) + 1;
+                return acc;
+            }, {});
+
+        const motivosChartData = Object.entries(descartesPorMotivo)
+            .map(([motivo, count]) => ({
+                name: motivo,
+                value: count
+            }))
+            .sort((a, b) => b.value - a.value);
+
+        const discardChartContainer = pipelineContainer.querySelector('#oportunidades-discard-chart');
+        if (discardChartContainer) {
+            if (!motivosChartData.length) {
+                discardChartContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <div class="empty-state-text">Aún no registras motivos de descarte.</div>
+                    </div>
+                `;
+            } else {
+                discardChartContainer.innerHTML = '';
+                const discardChart = anychart.pie(motivosChartData);
+                discardChart.background().fill('#FFFFFF');
+                discardChart.innerRadius('35%');
+                discardChart.legend().enabled(true);
+                discardChart.legend().position('right');
+                discardChart.legend().itemsLayout('vertical');
+                discardChart.labels().enabled(true);
+                discardChart.labels()
+                    .hAlign('center')
+                    .fontSize(12)
+                    .format('{%name}\n{%value} ({%percentValue}%)');
+                discardChart.tooltip()
+                    .titleFormat('{%name}')
+                    .format('{%value} descartes ({%percentValue}%)');
+                discardChart.interactivity().hoverMode('single');
+                discardChart.animation(true);
+                discardChart.container('oportunidades-discard-chart');
+                discardChart.draw();
+            }
+        }
         this.renderRecomendaciones();
     }
 
@@ -495,6 +562,19 @@ class OportunidadesModule {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+
+        const motivoDescarteSeleccionado = (oportunidad.motivoDescarte || '').trim();
+        const motivoSeleccionValido = MOTIVOS_DESCARTE_OPO.includes(motivoDescarteSeleccionado);
+        let motivosDescarteOptions = MOTIVOS_DESCARTE_OPO.map(motivo => {
+            const safeMotivo = escapeHtml(motivo);
+            const selectedAttr = motivoDescarteSeleccionado === motivo ? 'selected' : '';
+            return `<option value="${safeMotivo}" ${selectedAttr}>${safeMotivo}</option>`;
+        }).join('');
+        if (motivoDescarteSeleccionado && !motivoSeleccionValido) {
+            const safeCustomMotivo = escapeHtml(motivoDescarteSeleccionado);
+            motivosDescarteOptions = `<option value="${safeCustomMotivo}" selected>${safeCustomMotivo}</option>${motivosDescarteOptions}`;
+        }
+        const descripcionDescarte = escapeHtml(oportunidad.descripcionDescarte || '');
 
         const formatCampaniaTexto = (texto) => {
             if (!texto) return '';
@@ -893,6 +973,28 @@ class OportunidadesModule {
                                     </div>
                                 </form>
                                 <div id="${notasListId}" class="notas-list"></div>
+                            </div>
+                        </div>
+                        <div class="oportunidad-card">
+                            <div class="oportunidad-card-header">
+                                <div class="card-header-icon">🚫</div>
+                                <h3>Motivo de descarte</h3>
+                            </div>
+                            <div class="oportunidad-card-body">
+                                <div class="descarte-form-group">
+                                    <label for="oportunidad-motivo-descarte-${oportunidad.id}" style="display:block;font-weight:600;margin-bottom:6px;color:#3b2a14;">Motivo principal</label>
+                                    <select id="oportunidad-motivo-descarte-${oportunidad.id}" class="descarte-select" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(59,42,20,0.18);background:#ffffff;font-size:14px;">
+                                        <option value="">Selecciona un motivo</option>
+                                        ${motivosDescarteOptions}
+                                    </select>
+                                </div>
+                                <div class="descarte-form-group" style="margin-top:14px;">
+                                    <label for="oportunidad-descripcion-descarte-${oportunidad.id}" style="display:block;font-weight:600;margin-bottom:6px;color:#3b2a14;">Descripción detallada</label>
+                                    <textarea id="oportunidad-descripcion-descarte-${oportunidad.id}" class="descarte-textarea" rows="4" placeholder="Describe brevemente las razones del descarte o aspectos críticos detectados" style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(59,42,20,0.18);background:#ffffff;font-size:14px;resize:vertical;">${descripcionDescarte}</textarea>
+                                </div>
+                                <p style="font-size:12px;color:rgba(59,42,20,0.65);margin-top:10px;">
+                                    Registrar esta información ayuda a detectar riesgos recurrentes y preparar estrategias de recuperación.
+                                </p>
                             </div>
                         </div>
                     </div>
