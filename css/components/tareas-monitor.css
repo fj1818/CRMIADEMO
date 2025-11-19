@@ -1,0 +1,484 @@
+/* ============================================
+   CAMPANA DE ALERTAS
+   ============================================ */
+
+#tareas-campana-container {
+    display: flex;
+    align-items: center;
+}
+
+.tareas-campana {
+    display: flex;
+    align-items: center;
+    margin-right: 16px;
+}
+
+.campana-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF8800 0%, #FFB347 100%);
+    border: none;
+    box-shadow: 0 2px 8px rgba(255, 136, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.campana-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 24px rgba(255, 136, 0, 0.4);
+}
+
+.campana-icono {
+    font-size: 24px;
+    animation: none;
+}
+
+.tareas-campana.tiene-alertas .campana-icono {
+    animation: campana-ring 1s ease infinite;
+}
+
+@keyframes campana-ring {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(-15deg); }
+    20%, 40% { transform: rotate(15deg); }
+    50% { transform: rotate(0deg); }
+}
+
+.campana-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #FF0000;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4);
+}
+
+/* ============================================
+   NOTIFICACIÓN EMERGENTE
+   ============================================ */
+
+.tarea-notificacion-emergente {
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    width: 380px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 48px rgba(31, 42, 68, 0.2);
+    border: 2px solid #FF8800;
+    z-index: 9998;
+    opacity: 0;
+    transform: translateX(420px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tarea-notificacion-emergente.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notif-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(31, 42, 68, 0.1);
+}
+
+.notif-icono {
+    font-size: 24px;
+}
+
+.notif-titulo {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1F2A44;
+}
+
+.notif-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #64708A;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.notif-close:hover {
+    color: #FF8800;
+}
+
+.notif-body {
+    padding: 20px;
+}
+
+.notif-tarea-titulo {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1F2A44;
+    margin: 0 0 8px;
+}
+
+.notif-tarea-hora {
+    font-size: 13px;
+    color: #64708A;
+    margin: 0;
+}
+
+.notif-footer {
+    padding: 0 20px 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.notif-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.notif-btn-primary {
+    background: linear-gradient(135deg, #FF8800 0%, #FFB347 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.3);
+}
+
+.notif-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 136, 0, 0.4);
+}
+
+/* ============================================
+   MODAL DE CHAT
+   ============================================ */
+
+.tarea-chat-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.tarea-chat-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tarea-chat-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(31, 42, 68, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.tarea-chat-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(31, 42, 68, 0.3);
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+.tarea-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 2px solid #F0F3F8;
+}
+
+.tarea-chat-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1F2A44;
+}
+
+.tarea-chat-subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #64708A;
+}
+
+.tarea-chat-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #64708A;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.tarea-chat-close:hover {
+    color: #FF8800;
+}
+
+.tarea-chat-messages {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;
+}
+
+.tarea-chat-message {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.tarea-chat-message.user {
+    flex-direction: row-reverse;
+}
+
+.chat-message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF8800 0%, #FFB347 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.tarea-chat-message.user .chat-message-avatar {
+    background: linear-gradient(135deg, #2272FF 0%, #1857C9 100%);
+}
+
+.chat-message-content {
+    background: #F7F9FC;
+    border-radius: 16px;
+    padding: 14px 18px;
+    max-width: 70%;
+}
+
+.tarea-chat-message.user .chat-message-content {
+    background: linear-gradient(135deg, #2272FF 0%, #1857C9 100%);
+    color: #ffffff;
+}
+
+.chat-message-content p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1F2A44;
+}
+
+.tarea-chat-message.user .chat-message-content p {
+    color: #ffffff;
+}
+
+.chat-tarea-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    border-left: 4px solid #FF8800;
+}
+
+.chat-tarea-card strong {
+    display: block;
+    font-size: 14px;
+    color: #1F2A44;
+    margin-bottom: 6px;
+}
+
+.chat-tarea-card p {
+    margin: 0;
+    font-size: 12px;
+    color: #64708A;
+}
+
+.typing-indicator .chat-message-content {
+    padding: 18px 24px;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #64708A;
+    animation: typing-bounce 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+.tarea-chat-input-container {
+    padding: 20px 24px 16px;
+    border-top: 1px solid #F0F3F8;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.tarea-chat-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #E8EDF5;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: none;
+    transition: all 0.3s ease;
+}
+
+.tarea-chat-input:focus {
+    outline: none;
+    border-color: #FF8800;
+    box-shadow: 0 0 0 3px rgba(255, 136, 0, 0.1);
+}
+
+.tarea-chat-send-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FF8800 0%, #FFB347 100%);
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.tarea-chat-send-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(255, 136, 0, 0.4);
+}
+
+.tarea-chat-quick-actions {
+    padding: 0 24px 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.quick-action-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid #E8EDF5;
+    border-radius: 12px;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1F2A44;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quick-action-btn:hover {
+    border-color: #FF8800;
+    background: rgba(255, 136, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.quick-action-btn.btn-completada {
+    border-color: #4CAF50;
+    color: #4CAF50;
+}
+
+.quick-action-btn.btn-completada:hover {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: #4CAF50;
+}
+
+.quick-action-btn.btn-no-contacto {
+    border-color: #F44336;
+    color: #F44336;
+}
+
+.quick-action-btn.btn-no-contacto:hover {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: #F44336;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .tarea-notificacion-emergente {
+        width: calc(100% - 40px);
+        right: 20px;
+    }
+
+    .tarea-chat-box {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .tarea-chat-quick-actions {
+        flex-direction: column;
+    }
+}
+

@@ -150,6 +150,11 @@ class NavigationModule {
             if (typeof this.moduleInstances[sectionName].init === 'function') {
                 this.moduleInstances[sectionName].init();
             }
+            
+            // Exponer instancia de MisAccionesModule globalmente para el servicio de monitoreo
+            if (sectionName === 'mis-acciones' || route.module === 'MisAccionesModule') {
+                window.MisAccionesModuleInstance = this.moduleInstances[sectionName];
+            }
         }
     }
 

@@ -2,21 +2,110 @@
  * ============================================
  * MÓDULO DE MIS ACCIONES
  * ============================================
- * Gestiona la sección de tareas y actividades
+ * Rediseño de tablero para tareas diarias, semanales y mensuales
  */
 
 class MisAccionesModule {
     constructor() {
         this.sectionId = 'mis-acciones';
         this.container = null;
-        this.acciones = [];
-        this.eventos = [];
-        this.tablaAcciones = null;
+        this.tareas = {
+            dia: { titulo: 'Tareas de hoy', subtitulo: '', tareas: [] },
+            semana: { titulo: 'Semana en curso', subtitulo: '', tareas: [] },
+            mes: { titulo: 'Mes en curso', subtitulo: '', tareas: [] }
+        };
+        this.fechaHoyLaborable = null;
+        this.nombresReferencia = [];
+        this.nombreCursor = 0;
+        this.actividadCursor = 0;
+        this.actividadesBase = [
+            {
+                tipo: 'reunion',
+                generar: (nombre) => ({
+                    titulo: `Reunirme con ${nombre} para presentar la oferta`,
+                    descripcion: 'Agenda el encuentro, lleva simulaciones actualizadas y confirma asistentes.'
+                })
+            },
+            {
+                tipo: 'seguimiento',
+                generar: (nombre) => ({
+                    titulo: `Reunión de seguimiento postventa con ${nombre}`,
+                    descripcion: 'Valida la experiencia posterior a la dispersión y detecta nuevas oportunidades.'
+                })
+            },
+            {
+                tipo: 'llamada',
+                generar: (nombre) => ({
+                    titulo: `Llamada postventa con ${nombre}`,
+                    descripcion: 'Confirma recepción de documentos, resuelve dudas y agenda próximo toque.'
+                })
+            },
+            {
+                tipo: 'documentacion',
+                generar: (nombre) => ({
+                    titulo: `Solicitar identificaciones oficiales a ${nombre}`,
+                    descripcion: 'Reúne INE/Pasaporte vigente y súbelos al expediente digital.'
+                })
+            },
+            {
+                tipo: 'documentacion',
+                generar: (nombre) => ({
+                    titulo: `Solicitar comprobantes de ingresos de ${nombre}`,
+                    descripcion: 'Asegúrate de recibir estados de cuenta o recibos menores a 90 días.'
+                })
+            },
+            {
+                tipo: 'firma',
+                generar: (nombre) => ({
+                    titulo: `Coordinar firma de contrato con ${nombre}`,
+                    descripcion: 'Prepara condiciones finales, revisa anexos y confirma lugar de firma.'
+                })
+            },
+            {
+                tipo: 'estrategia',
+                generar: () => ({
+                    titulo: 'Junta con mi gerente para revisar metas',
+                    descripcion: 'Presenta avance semanal, identifica brechas y acuerda acciones de recuperación.'
+                })
+            },
+            {
+                tipo: 'oferta',
+                generar: (nombre) => ({
+                    titulo: `Llamada para compartir oferta actualizada a ${nombre}`,
+                    descripcion: 'Resalta beneficios clave, compara contra la competencia y cierra compromisos.'
+                })
+            },
+            {
+                tipo: 'expediente',
+                generar: (nombre) => ({
+                    titulo: `Actualizar expediente KYC de ${nombre}`,
+                    descripcion: 'Clasifica documentación, registra comentarios AML y marca checklist como completo.'
+                })
+            },
+            {
+                tipo: 'seguimiento',
+                generar: (nombre) => ({
+                    titulo: `Confirmar dispersión y activación con ${nombre}`,
+                    descripcion: 'Corrobora depósitos, verifica uso del producto y programa visita de cortesía.'
+                })
+            },
+            {
+                tipo: 'crm',
+                generar: (nombre) => ({
+                    titulo: `Registrar avance de ${nombre} en el CRM`,
+                    descripcion: 'Actualiza etapa, monto comprometido y deja notas accionables.'
+                })
+            },
+            {
+                tipo: 'oferta',
+                generar: (nombre) => ({
+                    titulo: `Preparar kit comercial para ${nombre}`,
+                    descripcion: 'Incluye fichas técnicas, casos de uso y propuesta de valor personalizada.'
+                })
+            }
+        ];
     }
 
-    /**
-     * Inicializa el módulo
-     */
     init() {
         this.container = document.getElementById(this.sectionId);
         if (!this.container) {
@@ -27,399 +116,422 @@ class MisAccionesModule {
         this.cargarDatos();
         this.render();
 
-        Helpers.log('Módulo de Mis Acciones inicializado', 'success');
+        Helpers.log('Módulo de Mis Acciones rediseñado e inicializado', 'success');
     }
 
-    /**
-     * Se ejecuta al entrar a la sección
-     */
     onEnter() {
         Helpers.log('Entrando a sección Mis Acciones', 'info');
         this.cargarDatos();
-        this.actualizarTabla();
-        this.renderAgenda();
+        this.render();
     }
 
-    /**
-     * Se ejecuta al salir de la sección
-     */
     onLeave() {
         Helpers.log('Saliendo de sección Mis Acciones', 'info');
     }
 
-    /**
-     * Carga las acciones y eventos
-     */
     cargarDatos() {
-        const accionesCrudas = window.AccionesUtils ? AccionesUtils.getTodas() : [];
-        const accionesExtras = this.generarAccionesDiarias();
-
-        this.acciones = [...accionesCrudas, ...accionesExtras]
-            .map(accion => this.transformarAccion(accion))
-            .sort((a, b) => {
-                const fechaA = a.fechaTarea ? new Date(a.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-                const fechaB = b.fechaTarea ? new Date(b.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-                return fechaA - fechaB;
-            });
-        const eventosBase = window.AgendaUtils ? AgendaUtils.getEventosOrdenados() : [];
-        const eventosConExtras = [...eventosBase, ...this.generarJuntasDiarias()];
-        this.eventos = eventosConExtras.sort((a, b) => {
-            const fechaA = a.fechaInicio ? new Date(a.fechaInicio).getTime() : Number.MAX_SAFE_INTEGER;
-            const fechaB = b.fechaInicio ? new Date(b.fechaInicio).getTime() : Number.MAX_SAFE_INTEGER;
-            return fechaA - fechaB;
-        });
+        this.generarTareas();
     }
 
-    /**
-     * Renderiza el contenido principal
-     */
+    generarTareas() {
+        this.fechaHoyLaborable = this.obtenerDiaLaborable(new Date());
+        this.nombresReferencia = this.obtenerNombresReferencia();
+        this.nombreCursor = 0;
+        this.actividadCursor = 0;
+
+        const hoy = this.fechaHoyLaborable;
+        const etiquetaHoy = this.formatearEtiquetaDia(hoy);
+        this.tareas.dia = {
+            titulo: 'Tareas de hoy',
+            subtitulo: `Prioriza tus 6 pendientes del ${etiquetaHoy}`,
+            tareas: this.crearTareasParaFecha(hoy, 'dia')
+        };
+
+        const diasSemana = this.obtenerDiasLaborablesSemana(hoy);
+        const tareasSemana = diasSemana.flatMap(fecha => this.crearTareasParaFecha(fecha, 'semana'));
+        this.tareas.semana = {
+            titulo: 'Semana en curso',
+            subtitulo: '6 tareas por día hábil para cumplir la meta semanal.',
+            tareas: tareasSemana
+        };
+
+        const diasMes = this.obtenerDiasLaborablesMes(hoy);
+        const maxDiasMes = Math.min(20, diasMes.length);
+        const diasSeleccionados = diasMes.slice(-maxDiasMes);
+        const tareasMes = diasSeleccionados.flatMap(fecha => this.crearTareasParaFecha(fecha, 'mes'));
+        this.tareas.mes = {
+            titulo: 'Mes en curso',
+            subtitulo: 'Suma 6 tareas por cada día hábil para alcanzar los objetivos del mes.',
+            tareas: tareasMes
+        };
+    }
+
     render() {
+        const resumenDia = this.obtenerResumenCategoria('dia');
+        const resumenSemana = this.obtenerResumenCategoria('semana');
+        const resumenMes = this.obtenerResumenCategoria('mes');
+
         this.container.innerHTML = `
-            <div class="acciones-wrapper">
-                <div class="acciones-header">
+            <div class="tareas-wrapper">
+                <div class="tareas-header">
                     <div>
-                        <h2>Tablero de acciones</h2>
-                        <p class="acciones-subtitle">Monitorea tareas clave vinculadas a prospectos y oportunidades.</p>
+                        <h2>Mis tareas comerciales</h2>
+                        <p class="tareas-subtitle">Organiza tu día, visualiza la semana y mantén el rumbo del mes.</p>
                     </div>
-                    <div class="acciones-kpis">
-                        ${this.renderKPIs()}
+                    <div class="tareas-header-metrics">
+                        ${this.renderMetric('dia', 'Hoy', resumenDia)}
+                        ${this.renderMetric('semana', 'Esta semana', resumenSemana)}
+                        ${this.renderMetric('mes', 'Este mes', resumenMes)}
                     </div>
                 </div>
 
-                <div class="acciones-panel">
-                    <div class="acciones-panel-header">
-                        <div>
-                            <h3>Acciones operativas</h3>
-                            <p>Listado de tareas asociadas a prospectos y oportunidades.</p>
-                        </div>
-                        <button id="btn-nueva-accion" class="acciones-add-btn">+ Agregar tarea</button>
+                <div class="tareas-tabs">
+                    <div class="tareas-tab-buttons">
+                        <button class="tareas-tab-btn active" data-tab="dia">
+                            <span style="font-size:18px;margin-right:6px;">📅</span>
+                            Hoy
+                        </button>
+                        <button class="tareas-tab-btn" data-tab="semana">
+                            <span style="font-size:18px;margin-right:6px;">📊</span>
+                            Semana
+                        </button>
+                        <button class="tareas-tab-btn" data-tab="mes">
+                            <span style="font-size:18px;margin-right:6px;">📈</span>
+                            Mes
+                        </button>
                     </div>
-                    <div id="tabla-acciones"></div>
-                </div>
-
-                <div class="agenda-panel">
-                    <div class="agenda-panel-header">
-                        <div>
-                            <h3>Agenda y próximos compromisos</h3>
-                            <p>Eventos agendados: visitas, llamadas, juntas y capacitaciones.</p>
-                        </div>
+                    <div class="tareas-tab-content active" id="tareas-dia" style="display:block;">
+                        ${this.renderGrupoHTML('dia')}
                     </div>
-                    <div id="agenda-acciones" class="agenda-list"></div>
+                    <div class="tareas-tab-content" id="tareas-semana" style="display:none;">
+                        ${this.renderGrupoHTML('semana')}
+                    </div>
+                    <div class="tareas-tab-content" id="tareas-mes" style="display:none;">
+                        ${this.renderGrupoHTML('mes')}
+                    </div>
                 </div>
             </div>
         `;
 
-        this.renderTabla();
-        this.renderAgenda();
+        this.bindTabEvents();
+        this.bindCheckboxEvents();
     }
 
-    renderTabla() {
-        const dataOrdenada = [...this.acciones].sort((a, b) => {
-            const fechaA = a.fechaTarea ? new Date(a.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-            const fechaB = b.fechaTarea ? new Date(b.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-            return fechaA - fechaB;
-        });
-
-        this.tablaAcciones = new TableComponent({
-            containerId: 'tabla-acciones',
-            title: 'Acciones programadas',
-            data: dataOrdenada,
-            columns: [
-                {
-                    label: 'Prospecto / Cliente',
-                    field: 'prospectoCliente',
-                    render: (value, row) => `
-                        <div class="acciones-ref">
-                            <span class="acciones-ref-main">${this.escapeHtml(row.prospectoCliente)}</span>
-                            ${row.prospectoClienteDetalle ? `<span class="acciones-ref-detail">${this.escapeHtml(row.prospectoClienteDetalle)}</span>` : ''}
-                        </div>
-                    `
-                },
-                {
-                    label: 'Tarea',
-                    field: 'tarea',
-                    render: (value, row) => `
-                        <div class="acciones-task">
-                            <span class="acciones-task-icon">${this.getIconoTarea(value)}</span>
-                            <div>
-                                <span class="acciones-task-name">${value}</span>
-                                ${row.descripcion ? `<span class="acciones-task-desc">${row.descripcion}</span>` : ''}
-                            </div>
-                        </div>
-                    `
-                },
-                {
-                    label: 'Fecha de la tarea',
-                    field: 'fechaTarea',
-                    render: (value) => value ? Helpers.formatDateTime(new Date(value)) : '-'
-                },
-                {
-                    label: 'Fecha de completado',
-                    field: 'fechaCompletado',
-                    render: (value) => value
-                        ? `<span class="badge badge-success">${Helpers.formatDateTime(new Date(value))}</span>`
-                        : '<span class="badge badge-warning">Pendiente</span>'
-                }
-            ],
-            searchable: true,
-            filterable: true,
-            filters: [
-                {
-                    field: 'estadoAccion',
-                    label: 'Estado',
-                    options: [
-                        { value: 'pendiente', label: 'Pendientes' },
-                        { value: 'completada', label: 'Completadas' }
-                    ]
-                },
-                {
-                    field: 'tarea',
-                    label: 'Tipo de tarea',
-                    options: [...new Set(this.acciones.map(a => a.tarea))].map(tarea => ({ value: tarea, label: tarea }))
-                }
-            ]
-        });
-
-        this.tablaAcciones.init();
-
-        const addButton = document.getElementById('btn-nueva-accion');
-        if (addButton) {
-            addButton.addEventListener('click', () => {
-                alert('Funcionalidad para agregar tareas en desarrollo.');
-            });
-        }
+    renderMetric(categoria, etiqueta, resumen) {
+        const porcentaje = resumen.total > 0 ? Math.round((resumen.completadas / resumen.total) * 100) : 0;
+        return `
+            <div class="tareas-metric" data-metric="${categoria}">
+                <span class="tareas-metric-label">${etiqueta}</span>
+                <span class="tareas-metric-value">${resumen.total} tareas</span>
+                <span class="tareas-metric-progress">${resumen.completadas} completadas (${porcentaje}%)</span>
+            </div>
+        `;
     }
 
-    actualizarTabla() {
-        if (!this.tablaAcciones) return;
-        const dataOrdenada = [...this.acciones].sort((a, b) => {
-            const fechaA = a.fechaTarea ? new Date(a.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-            const fechaB = b.fechaTarea ? new Date(b.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-            return fechaA - fechaB;
-        });
-        this.tablaAcciones.data = dataOrdenada;
-        this.tablaAcciones.filterData();
-    }
-
-    renderAgenda() {
-        const agendaContainer = document.getElementById('agenda-acciones');
-        if (!agendaContainer) return;
-
-        if (!this.eventos.length) {
-            agendaContainer.innerHTML = `
-                <div class="agenda-empty">
-                    <div class="agenda-empty-icon">📭</div>
-                    <p>No hay eventos agendados.</p>
-                </div>
-            `;
-            return;
-        }
-
-        const listaOrdenada = [...this.eventos].sort((a, b) => {
-            const fechaA = a.fechaInicio ? new Date(a.fechaInicio).getTime() : Number.MAX_SAFE_INTEGER;
-            const fechaB = b.fechaInicio ? new Date(b.fechaInicio).getTime() : Number.MAX_SAFE_INTEGER;
-            return fechaA - fechaB;
-        });
-
-        const html = listaOrdenada.map(evento => {
-            const fechaInicio = evento.fechaInicio
-                ? Helpers.formatDateTime(new Date(evento.fechaInicio))
-                : 'Sin fecha programada';
-            const fechaFin = evento.fechaFin
-                ? Helpers.formatDateTime(new Date(evento.fechaFin))
-                : null;
-
+    renderGrupoHTML(categoria) {
+        const grupo = this.tareas[categoria];
+        if (!grupo || !grupo.tareas.length) {
             return `
-                <div class="agenda-event agenda-event-card">
-                    <div class="agenda-event-icon">${this.getIconoEvento(evento.tipo)}</div>
-                    <div class="agenda-event-info">
-                        <div class="agenda-event-title">${this.escapeHtml(evento.titulo)}</div>
-                        <div class="agenda-event-time">
-                            ${this.escapeHtml(fechaInicio)}${fechaFin ? ` &mdash; ${this.escapeHtml(fechaFin)}` : ''}
-                        </div>
-                        ${evento.descripcion ? `<div class="agenda-event-desc">${this.escapeHtml(evento.descripcion)}</div>` : ''}
-                        ${evento.relacionado ? `<span class="agenda-event-tag">Relacionado: ${this.escapeHtml(evento.relacionado)}</span>` : ''}
-                    </div>
+                <div class="tareas-empty">
+                    <div class="tareas-empty-icon">🎯</div>
+                    <p style="color:#64708A;">Aún no tienes tareas registradas en esta vista.</p>
                 </div>
             `;
-        }).join('');
+        }
 
-        agendaContainer.innerHTML = `<div class="agenda-event-list agenda-event-list--flat">${html}</div>`;
-    }
+        const resumen = this.obtenerResumenCategoria(categoria);
+        const porcentaje = resumen.porcentaje;
 
-    getIconoTarea(tarea) {
-        const mapa = {
-            'Llamar': '📞',
-            'Solicitar identificaciones': '🪪',
-            'Solicitar comprobantes de domicilio': '🏠',
-            'Agendar visita': '📅',
-            'Completar información de folios': '🗂️',
-            'Revisión diaria de pipeline': '📊',
-            'Contactar clientes prioritarios': '📌'
-        };
-        return mapa[tarea] || '📝';
-    }
+        const agrupaciones = grupo.tareas.reduce((mapa, tarea) => {
+            const clave = tarea.fechaEtiqueta || grupo.titulo;
+            if (!mapa.has(clave)) {
+                mapa.set(clave, []);
+            }
+            mapa.get(clave).push(tarea);
+            return mapa;
+        }, new Map());
 
-    getIconoEvento(tipo) {
-        const mapa = {
-            'Visita': '🚗',
-            'Llamada': '📞',
-            'Junta': '🤝',
-            'Capacitación': '🎓'
-        };
-        return mapa[tipo] || '🗓️';
-    }
-
-    renderKPIs() {
-        const total = this.acciones.length;
-        const pendientes = this.acciones.filter(a => a.estadoAccion === 'pendiente').length;
-        const completadas = total - pendientes;
+        const listasHTML = Array.from(agrupaciones.entries()).map(([etiqueta, tareas]) => `
+            <div class="tareas-lista-dia">
+                <div class="tareas-dia-header">
+                    <h5>${this.escapeHtml(etiqueta)}</h5>
+                    <span class="tareas-grupo-badge">${tareas.length} tareas</span>
+                </div>
+                <ul class="tareas-lista">
+                    ${tareas.map(tarea => this.renderTareaItem(categoria, tarea)).join('')}
+                </ul>
+            </div>
+        `).join('');
 
         return `
-            <div class="acciones-kpi-card">
-                <span class="acciones-kpi-value">${total}</span>
-                <span class="acciones-kpi-label">Total de tareas</span>
-            </div>
-            <div class="acciones-kpi-card">
-                <span class="acciones-kpi-value acciones-kpi-success">${pendientes}</span>
-                <span class="acciones-kpi-label">Pendientes</span>
-            </div>
-            <div class="acciones-kpi-card">
-                <span class="acciones-kpi-value acciones-kpi-info">${completadas}</span>
-                <span class="acciones-kpi-label">Completadas</span>
+            <div class="tareas-panel">
+                <header class="tareas-grupo-header">
+                    <h4>${this.escapeHtml(grupo.titulo)}</h4>
+                    <span class="tareas-grupo-badge">${resumen.total} tareas</span>
+                </header>
+                <div class="tareas-progress-container">
+                    <div class="tareas-progress-track">
+                        <div class="tareas-progress-bar" data-progress="${categoria}" style="width:${porcentaje}%;"></div>
+                    </div>
+                    <span class="tareas-progress-text">${resumen.completadas}/${resumen.total} completadas</span>
+                </div>
+                ${listasHTML}
             </div>
         `;
     }
 
-    transformarAccion(accion) {
-        const prospecto = window.ProspectosUtils && accion.idProspecto
-            ? ProspectosUtils.getPorId(accion.idProspecto)
-            : null;
-        const clientes = window.ClientesUtils && typeof ClientesUtils.getTodos === 'function'
-            ? ClientesUtils.getTodos()
-            : [];
-        const cliente = accion.idCliente
-            ? clientes.find(c => c.ide === accion.idCliente || c.id === accion.idCliente)
-            : null;
+    renderTareaItem(categoria, tarea) {
+        const checkedAttr = tarea.completada ? 'checked' : '';
+        const tipoInfo = this.getInfoTipo(tarea.tipo);
+        const completadaClass = tarea.completada ? 'completada' : '';
+        const horaDisplay = tarea.hora ? `⏰ ${tarea.hora}` : '';
 
-        return {
-            ...accion,
-            estadoAccion: accion.fechaCompletado ? 'completada' : 'pendiente',
-            prospectoNombre: prospecto ? prospecto.nombre : 'Sin prospecto asignado',
-            clienteNombre: cliente ? cliente.nombre : 'Sin cliente asignado',
-            prospectoCliente: this.combinarProspectoCliente(prospecto, cliente),
-            prospectoClienteDetalle: this.generarDetalleProspectoCliente(prospecto, cliente)
+        return `
+            <li class="tarea-item ${completadaClass}" data-task="${tarea.id}">
+                <input type="checkbox" class="tarea-checkbox" data-categoria="${categoria}" data-id="${tarea.id}" ${checkedAttr}>
+                <div class="tarea-item-body">
+                    <div class="tarea-item-header">
+                        <span class="tarea-item-title">${this.escapeHtml(tarea.titulo)}</span>
+                        <span class="tarea-tipo-chip" style="background:${tipoInfo.fondo};color:${tipoInfo.color};">
+                            <span>${tipoInfo.icono}</span> ${tipoInfo.etiqueta}
+                        </span>
+                    </div>
+                    ${tarea.descripcion ? `<span class="tarea-item-desc">${this.escapeHtml(tarea.descripcion)}</span>` : ''}
+                    ${horaDisplay ? `<span class="tarea-item-hora" style="font-size:12px;color:#FF8800;font-weight:600;margin-top:4px;display:block;">${horaDisplay}</span>` : ''}
+                </div>
+            </li>
+        `;
+    }
+
+    bindTabEvents() {
+        const botones = this.container.querySelectorAll('.tareas-tab-btn');
+        const contenidos = this.container.querySelectorAll('.tareas-tab-content');
+
+        botones.forEach(boton => {
+            boton.addEventListener('click', () => {
+                const tab = boton.dataset.tab;
+                botones.forEach(btn => btn.classList.toggle('active', btn === boton));
+                contenidos.forEach(panel => {
+                    const esActivo = panel.id === `tareas-${tab}`;
+                    panel.classList.toggle('active', esActivo);
+                    panel.style.display = esActivo ? 'block' : 'none';
+                });
+            });
+        });
+    }
+
+    bindCheckboxEvents() {
+        const checkboxes = this.container.querySelectorAll('.tarea-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (event) => this.toggleTarea(event));
+        });
+    }
+
+    toggleTarea(event) {
+        const checkbox = event.target;
+        const categoria = checkbox.dataset.categoria;
+        const id = checkbox.dataset.id;
+        const grupo = this.tareas[categoria];
+        if (!grupo) return;
+
+        const tarea = grupo.tareas.find(t => t.id === id);
+        if (!tarea) return;
+
+        tarea.completada = checkbox.checked;
+        this.updateGrupoUI(categoria);
+    }
+
+    updateGrupoUI(categoria) {
+        const grupo = this.tareas[categoria];
+        if (!grupo) return;
+
+        const resumen = this.obtenerResumenCategoria(categoria);
+        const contenedor = this.container.querySelector(`#tareas-${categoria}`);
+        if (!contenedor) return;
+
+        const barra = contenedor.querySelector(`.tareas-progress-bar[data-progress="${categoria}"]`);
+        if (barra) {
+            barra.style.width = `${resumen.porcentaje}%`;
+        }
+
+        const texto = contenedor.querySelector('.tareas-progress-text');
+        if (texto) {
+            texto.textContent = `${resumen.completadas}/${resumen.total} completadas`;
+        }
+
+        grupo.tareas.forEach(tarea => {
+            const elemento = contenedor.querySelector(`[data-task="${tarea.id}"]`);
+            if (!elemento) return;
+            
+            if (tarea.completada) {
+                elemento.classList.add('completada');
+            } else {
+                elemento.classList.remove('completada');
+            }
+        });
+
+        this.updateMetricDisplay(categoria);
+    }
+
+    updateMetricDisplay(categoria) {
+        const resumen = this.obtenerResumenCategoria(categoria);
+        const tarjeta = this.container.querySelector(`.tareas-metric[data-metric="${categoria}"]`);
+        if (!tarjeta) return;
+
+        const valor = tarjeta.querySelector('.tareas-metric-value');
+        const progreso = tarjeta.querySelector('.tareas-metric-progress');
+        if (valor) valor.textContent = `${resumen.total} tareas`;
+        if (progreso) progreso.textContent = `${resumen.completadas} completadas (${resumen.porcentaje}%)`;
+    }
+
+    obtenerResumenCategoria(categoria) {
+        const grupo = this.tareas[categoria];
+        if (!grupo) {
+            return { total: 0, completadas: 0, porcentaje: 0 };
+        }
+        const total = grupo.tareas.length;
+        const completadas = grupo.tareas.filter(t => t.completada).length;
+        const porcentaje = total ? Math.round((completadas / total) * 100) : 0;
+        return { total, completadas, porcentaje };
+    }
+
+    obtenerNombresReferencia() {
+        const nombres = [];
+        if (window.ProspectosUtils && typeof ProspectosUtils.getTodos === 'function') {
+            nombres.push(
+                ...ProspectosUtils.getTodos()
+                    .map(prospecto => prospecto.nombre)
+                    .filter(Boolean)
+            );
+        }
+        if (window.OportunidadesUtils && typeof OportunidadesUtils.getTodos === 'function') {
+            nombres.push(
+                ...OportunidadesUtils.getTodos()
+                    .map(oportunidad => oportunidad.client || oportunidad.ide || null)
+                    .filter(Boolean)
+            );
+        }
+        const unicos = Array.from(new Set(nombres));
+        return unicos.length ? unicos : ['cliente clave'];
+    }
+
+    obtenerNombreReferencia() {
+        const nombre = this.nombresReferencia[this.nombreCursor % this.nombresReferencia.length];
+        this.nombreCursor += 1;
+        return nombre;
+    }
+
+    crearTareasParaFecha(fecha, scope) {
+        const tareas = [];
+        const fechaISO = fecha.toISOString().split('T')[0];
+        const etiqueta = this.formatearEtiquetaDia(fecha);
+        const horasBase = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];
+
+        for (let i = 0; i < 6; i += 1) {
+            const nombre = this.obtenerNombreReferencia();
+            const plantilla = this.actividadesBase[(this.actividadCursor + i) % this.actividadesBase.length];
+            const { titulo, descripcion } = plantilla.generar(nombre);
+            const hora = horasBase[i];
+            const fechaHoraISO = `${fechaISO}T${hora}:00`;
+
+            tareas.push({
+                id: `${scope}-${fechaISO}-${i}`,
+                titulo,
+                descripcion,
+                tipo: plantilla.tipo,
+                fecha: fechaHoraISO,
+                fechaEtiqueta: etiqueta,
+                hora,
+                completada: false
+            });
+        }
+
+        this.actividadCursor = (this.actividadCursor + 6) % this.actividadesBase.length;
+        return tareas;
+    }
+
+    obtenerDiaLaborable(fecha) {
+        const date = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+        while (!this.esDiaLaborable(date)) {
+            date.setDate(date.getDate() - 1);
+        }
+        return date;
+    }
+
+    esDiaLaborable(fecha) {
+        const diaSemana = fecha.getDay();
+        return diaSemana >= 1 && diaSemana <= 5;
+    }
+
+    obtenerDiasLaborablesSemana(fechaReferencia) {
+        const inicioSemana = this.getInicioSemana(fechaReferencia);
+        const dias = [];
+        const cursor = new Date(inicioSemana);
+
+        while (cursor <= fechaReferencia) {
+            if (this.esDiaLaborable(cursor)) {
+                dias.push(new Date(cursor));
+            }
+            cursor.setDate(cursor.getDate() + 1);
+        }
+
+        return dias;
+    }
+
+    getInicioSemana(fecha) {
+        const base = new Date(fecha);
+        const diaSemana = base.getDay(); // 0 domingo, 1 lunes
+        const diferencia = diaSemana === 0 ? -6 : 1 - diaSemana;
+        base.setDate(base.getDate() + diferencia);
+        return this.obtenerDiaLaborable(base);
+    }
+
+    obtenerDiasLaborablesMes(fechaReferencia) {
+        const inicioMes = new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth(), 1);
+        const dias = [];
+        const cursor = new Date(inicioMes);
+
+        while (cursor <= fechaReferencia) {
+            if (this.esDiaLaborable(cursor)) {
+                dias.push(new Date(cursor));
+            }
+            cursor.setDate(cursor.getDate() + 1);
+        }
+
+        return dias;
+    }
+
+    formatearEtiquetaDia(fecha) {
+        const opciones = { weekday: 'long', day: '2-digit', month: 'short' };
+        let etiqueta = new Intl.DateTimeFormat('es-MX', opciones).format(fecha);
+        etiqueta = etiqueta.replace('.', '').replace(',', ' · ');
+        return etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1);
+    }
+
+    escapeHtml(texto = '') {
+        return String(texto)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    getInfoTipo(tipo = '') {
+        const mapa = {
+            reunion: { icono: '🤝', etiqueta: 'Reunión', fondo: 'rgba(255,136,0,0.15)', color: '#9A4B00' },
+            seguimiento: { icono: '🔁', etiqueta: 'Seguimiento', fondo: 'rgba(34,114,255,0.12)', color: '#1F4D99' },
+            llamada: { icono: '📞', etiqueta: 'Llamada', fondo: 'rgba(76,201,240,0.15)', color: '#0B7899' },
+            documentacion: { icono: '🗂️', etiqueta: 'Documentación', fondo: 'rgba(46,204,113,0.12)', color: '#187748' },
+            firma: { icono: '✍️', etiqueta: 'Firma', fondo: 'rgba(155,89,182,0.15)', color: '#5F2CA1' },
+            estrategia: { icono: '📊', etiqueta: 'Estrategia', fondo: 'rgba(255,199,0,0.18)', color: '#9C6B00' },
+            oferta: { icono: '💡', etiqueta: 'Oferta', fondo: 'rgba(255,107,129,0.18)', color: '#A8324D' },
+            expediente: { icono: '🗃️', etiqueta: 'Expediente', fondo: 'rgba(52,152,219,0.15)', color: '#1D5F96' },
+            crm: { icono: '📝', etiqueta: 'CRM', fondo: 'rgba(39,174,96,0.15)', color: '#1F7B4D' }
         };
-    }
-
-    generarAccionesDiarias() {
-        const hoy = new Date();
-        const anioReferencia = this.obtenerAnioReferencia();
-        const fechaLocal = new Date(anioReferencia, hoy.getMonth(), hoy.getDate());
-        const isoBase = fechaLocal.toISOString().split('T')[0];
-
-        return [
-            {
-                id: 'ACT-HOY-001',
-                idProspecto: null,
-                idCliente: null,
-                tarea: 'Revisión diaria de pipeline',
-                descripcion: 'Asegúrate de actualizar el estado de las oportunidades abiertas del día.',
-                fechaTarea: `${isoBase}T09:00:00`,
-                fechaCompletado: null
-            },
-            {
-                id: 'ACT-HOY-002',
-                idProspecto: null,
-                idCliente: null,
-                tarea: 'Contactar clientes prioritarios',
-                descripcion: 'Realiza al menos tres llamadas de seguimiento a clientes con juntas próximas.',
-                fechaTarea: `${isoBase}T12:00:00`,
-                fechaCompletado: null
-            }
-        ];
-    }
-
-    generarJuntasDiarias() {
-        const hoy = new Date();
-        const anioReferencia = this.obtenerAnioReferencia();
-        const fechaLocal = new Date(anioReferencia, hoy.getMonth(), hoy.getDate());
-        const isoFecha = fechaLocal.toISOString().split('T')[0];
-
-        return [
-            {
-                id: 'JUNTA-HOY-001',
-                titulo: 'Reunión de alineación comercial',
-                descripcion: 'Repaso breve con el equipo sobre los objetivos y pendientes del día.',
-                tipo: 'Junta',
-                fechaInicio: `${isoFecha}T10:00:00`,
-                fechaFin: `${isoFecha}T11:00:00`,
-                relacionado: null
-            },
-            {
-                id: 'JUNTA-HOY-002',
-                titulo: 'Junta rápida con dirección',
-                descripcion: 'Compartir estatus de oportunidades clave antes del cierre diario.',
-                tipo: 'Junta',
-                fechaInicio: `${isoFecha}T16:30:00`,
-                fechaFin: `${isoFecha}T17:00:00`,
-                relacionado: null
-            }
-        ];
-    }
-
-    obtenerAnioReferencia() {
-        const eventosBase = window.AgendaUtils
-            ? AgendaUtils.getEventosOrdenados()
-            : (window.AGENDA_EVENTOS || []);
-
-        if (eventosBase.length > 0 && eventosBase[0].fechaInicio) {
-            const primerEventoOrdenado = [...eventosBase].sort(
-                (a, b) => new Date(a.fechaInicio) - new Date(b.fechaInicio)
-            )[0];
-            const anio = new Date(primerEventoOrdenado.fechaInicio).getFullYear();
-            if (!isNaN(anio)) {
-                return anio;
-            }
-        }
-
-        return new Date().getFullYear();
-    }
-
-    combinarProspectoCliente(prospecto, cliente) {
-        const nombreProspecto = prospecto ? prospecto.nombre : null;
-        const nombreCliente = cliente ? cliente.nombre : null;
-
-        if (nombreProspecto && nombreCliente) {
-            return `${nombreProspecto} / ${nombreCliente}`;
-        }
-        if (nombreProspecto) {
-            return nombreProspecto;
-        }
-        if (nombreCliente) {
-            return nombreCliente;
-        }
-        return 'Sin asignar';
-    }
-
-    generarDetalleProspectoCliente(prospecto, cliente) {
-        const info = [];
-        if (prospecto && prospecto.familiaProducto) {
-            info.push(`Interés: ${prospecto.familiaProducto}`);
-        }
-        if (cliente && cliente.prioridad) {
-            info.push(`Prioridad: ${cliente.prioridad}`);
-        }
-        return info.length ? info.join(' · ') : null;
-    }
-
-    escapeHtml(texto) {
-        const div = document.createElement('div');
-        div.textContent = texto;
-        return div.innerHTML;
+        return mapa[tipo] || { icono: '📝', etiqueta: 'Tarea', fondo: 'rgba(31,42,68,0.12)', color: '#1F2A44' };
     }
 }
 
-// Hacer disponible globalmente
 window.MisAccionesModule = MisAccionesModule;
 

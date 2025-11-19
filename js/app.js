@@ -105,6 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Crear instancia global de la aplicación
     window.app = new CRMApp();
     window.app.init();
+    
+    // Inicializar servicio de monitoreo de tareas
+    if (window.TareasMonitorService) {
+        window.TareasMonitorService.init();
+    }
 });
 
 /**
