@@ -36,7 +36,7 @@ const ROUTES = {
     },
     'mis-acciones': {
         id: 'mis-acciones',
-        name: 'Mis Acciones',
+        name: 'Mis actividades',
         icon: '✅',
         description: 'Tareas y actividades pendientes',
         module: 'MisAccionesModule'

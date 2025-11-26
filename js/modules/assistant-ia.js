@@ -55,7 +55,10 @@ class AssistantIAModule {
         };
 
         this.bindEvents();
-        this.renderAcciones();
+        // Esperar un momento para que el módulo de actividades se inicialice
+        setTimeout(() => {
+            this.renderAcciones();
+        }, 500);
         this.renderJuntas();
 
         Helpers && Helpers.log ? Helpers.log('Módulo del asistente IA inicializado', 'info') : console.log('Assistant IA listo');
@@ -132,7 +135,10 @@ class AssistantIAModule {
         });
 
         if (view === 'acciones') {
-            this.renderAcciones();
+            // Asegurar que las actividades estén actualizadas
+            setTimeout(() => {
+                this.renderAcciones();
+            }, 100);
         } else if (view === 'juntas') {
             this.renderJuntas();
         }
@@ -401,42 +407,140 @@ class AssistantIAModule {
     renderAcciones() {
         if (!this.accionesContainer) return;
 
-        const acciones = this.obtenerAccionesConExtras().map(accion => this.mapearAccionParaMostrar(accion));
-        const pendientes = acciones.filter(accion => !accion.fechaCompletado);
-
-        if (!pendientes.length) {
-            this.accionesContainer.innerHTML = '<p>No tienes acciones pendientes por ahora.</p>';
+        // Obtener las actividades de hoy desde Mis actividades (pestaña "Hoy")
+        const actividadesHoy = this.obtenerActividadesHoy();
+        
+        if (actividadesHoy.length === 0) {
+            // Intentar una vez más después de un breve delay
+            setTimeout(() => {
+                const actividadesRetry = this.obtenerActividadesHoy();
+                if (actividadesRetry.length > 0) {
+                    this.renderActividadesList(actividadesRetry);
+                } else {
+                    this.accionesContainer.innerHTML = '<p>No tienes actividades programadas para hoy.</p>';
+                }
+            }, 1000);
             return;
         }
 
-        const sorted = pendientes.sort((a, b) => {
-            const fechaA = a.fechaTarea ? new Date(a.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
-            const fechaB = b.fechaTarea ? new Date(b.fechaTarea).getTime() : Number.MAX_SAFE_INTEGER;
+        this.renderActividadesList(actividadesHoy);
+    }
+
+    renderActividadesList(actividadesMiercoles) {
+        if (!this.accionesContainer) return;
+
+        // Ordenar por hora
+        const sorted = actividadesMiercoles.sort((a, b) => {
+            const fechaA = a.fecha ? new Date(a.fecha).getTime() : Number.MAX_SAFE_INTEGER;
+            const fechaB = b.fecha ? new Date(b.fecha).getTime() : Number.MAX_SAFE_INTEGER;
             return fechaA - fechaB;
         });
 
-        this.accionesContainer.innerHTML = sorted.map(accion => {
-            const fecha = accion.fechaTarea ? this.formatDateTimeSafe(accion.fechaTarea) : 'Sin fecha programada';
+        this.accionesContainer.innerHTML = sorted.map(actividad => {
+            const fecha = actividad.fecha ? this.formatDateTimeSafe(actividad.fecha) : 'Sin fecha programada';
+            const tipoInfo = this.getTipoInfoActividad(actividad.tipo);
             const metaTags = [
-                accion.prospectoNombre ? `<span class="recordatorio-tag">👤 ${this.escapeHtml(accion.prospectoNombre)}</span>` : '',
-                accion.clienteNombre ? `<span class="recordatorio-tag">💼 ${this.escapeHtml(accion.clienteNombre)}</span>` : '',
-                '<span class="recordatorio-tag">⏳ Pendiente</span>',
+                `<span class="recordatorio-tag">${tipoInfo.icono} ${tipoInfo.etiqueta}</span>`,
+                actividad.completada ? '<span class="recordatorio-tag">✅ Completada</span>' : '<span class="recordatorio-tag">⏳ Pendiente</span>',
                 `<span class="recordatorio-tag">📅 ${this.escapeHtml(fecha)}</span>`
             ].filter(Boolean).join('');
 
             return `
-                <article class="recordatorio-card">
+                <article class="recordatorio-card ${actividad.completada ? 'completada' : ''}">
                     <div class="recordatorio-title">
-                        <span>📝</span>
-                        <span>${this.escapeHtml(accion.tarea)}</span>
+                        <span>${tipoInfo.icono}</span>
+                        <span>${this.escapeHtml(actividad.titulo)}</span>
                     </div>
                     <div class="recordatorio-meta">
                         ${metaTags}
                     </div>
-                    ${accion.descripcion ? `<p class="recordatorio-descripcion">${this.escapeHtml(accion.descripcion)}</p>` : ''}
+                    ${actividad.descripcion ? `<p class="recordatorio-descripcion">${this.escapeHtml(actividad.descripcion)}</p>` : ''}
                 </article>
             `;
         }).join('');
+    }
+
+    obtenerActividadesHoy() {
+        let moduloAcciones = window.MisAccionesModuleInstance;
+        
+        // Si el módulo no está inicializado, inicializarlo
+        if (!moduloAcciones) {
+            console.log('[AssistantIA] Módulo de actividades no disponible, intentando inicializar...');
+            
+            // Intentar inicializar el módulo manualmente
+            if (window.MisAccionesModule) {
+                moduloAcciones = new window.MisAccionesModule();
+                moduloAcciones.init();
+                window.MisAccionesModuleInstance = moduloAcciones;
+                console.log('[AssistantIA] Módulo de actividades inicializado');
+            } else {
+                console.log('[AssistantIA] Clase MisAccionesModule no disponible');
+                return [];
+            }
+        }
+
+        // Asegurar que las tareas estén generadas
+        if (!moduloAcciones.tareas || 
+            (!moduloAcciones.tareas.dia?.tareas?.length && 
+             !moduloAcciones.tareas.semana?.tareas?.length && 
+             !moduloAcciones.tareas.mes?.tareas?.length)) {
+            // Forzar la generación de tareas
+            if (typeof moduloAcciones.cargarDatos === 'function') {
+                moduloAcciones.cargarDatos();
+            } else if (typeof moduloAcciones.generarTareas === 'function') {
+                moduloAcciones.generarTareas();
+            }
+        }
+
+        if (!moduloAcciones.tareas) {
+            console.log('[AssistantIA] No se pudieron generar las tareas');
+            return [];
+        }
+
+        // Obtener las actividades de la pestaña "Hoy" (categoría "dia")
+        const actividadesHoy = moduloAcciones.tareas.dia?.tareas || [];
+        
+        console.log('[AssistantIA] Actividades de hoy encontradas:', actividadesHoy.length);
+        if (actividadesHoy.length > 0) {
+            console.log('[AssistantIA] Ejemplo de actividad:', {
+                titulo: actividadesHoy[0].titulo,
+                fecha: actividadesHoy[0].fecha,
+                fechaEtiqueta: actividadesHoy[0].fechaEtiqueta,
+                tipo: actividadesHoy[0].tipo
+            });
+        } else {
+            console.log('[AssistantIA] No hay actividades en tareas.dia');
+            console.log('[AssistantIA] Estado del módulo:', {
+                tieneTareas: !!moduloAcciones.tareas,
+                tieneDia: !!moduloAcciones.tareas?.dia,
+                tareasDia: moduloAcciones.tareas?.dia?.tareas?.length || 0
+            });
+        }
+        
+        return actividadesHoy;
+    }
+
+    formatearEtiquetaEsperada(fecha) {
+        // Formatear similar a como lo hace MisAccionesModule
+        const opciones = { weekday: 'long', day: '2-digit', month: 'short' };
+        let etiqueta = new Intl.DateTimeFormat('es-MX', opciones).format(fecha);
+        etiqueta = etiqueta.replace('.', '').replace(',', ' · ');
+        return etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1);
+    }
+
+    getTipoInfoActividad(tipo = '') {
+        const mapa = {
+            reunion: { icono: '🤝', etiqueta: 'Reunión' },
+            seguimiento: { icono: '🔁', etiqueta: 'Seguimiento' },
+            llamada: { icono: '📞', etiqueta: 'Llamada' },
+            documentacion: { icono: '🗂️', etiqueta: 'Documentación' },
+            firma: { icono: '✍️', etiqueta: 'Firma' },
+            estrategia: { icono: '📊', etiqueta: 'Estrategia' },
+            oferta: { icono: '💡', etiqueta: 'Oferta' },
+            expediente: { icono: '🗃️', etiqueta: 'Expediente' },
+            crm: { icono: '📝', etiqueta: 'CRM' }
+        };
+        return mapa[tipo] || { icono: '📝', etiqueta: 'Tarea' };
     }
 
     renderJuntas() {

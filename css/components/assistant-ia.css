@@ -366,6 +366,15 @@
     margin-bottom: 0;
 }
 
+.recordatorio-card.completada {
+    opacity: 0.6;
+}
+
+.recordatorio-card.completada .recordatorio-title span:last-child {
+    text-decoration: line-through;
+    color: var(--gray-500);
+}
+
 .recordatorio-title,
 .agenda-title {
     display: flex;

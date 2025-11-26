@@ -1,6 +1,6 @@
 /**
  * ============================================
- * MÓDULO DE MIS ACCIONES
+ * MÓDULO DE MIS ACTIVIDADES
  * ============================================
  * Rediseño de tablero para tareas diarias, semanales y mensuales
  */
@@ -109,24 +109,24 @@ class MisAccionesModule {
     init() {
         this.container = document.getElementById(this.sectionId);
         if (!this.container) {
-            Helpers.log('Contenedor de Mis Acciones no encontrado', 'error');
+            Helpers.log('Contenedor de Mis actividades no encontrado', 'error');
             return;
         }
 
         this.cargarDatos();
         this.render();
 
-        Helpers.log('Módulo de Mis Acciones rediseñado e inicializado', 'success');
+        Helpers.log('Módulo de Mis actividades rediseñado e inicializado', 'success');
     }
 
     onEnter() {
-        Helpers.log('Entrando a sección Mis Acciones', 'info');
+        Helpers.log('Entrando a sección Mis actividades', 'info');
         this.cargarDatos();
         this.render();
     }
 
     onLeave() {
-        Helpers.log('Saliendo de sección Mis Acciones', 'info');
+        Helpers.log('Saliendo de sección Mis actividades', 'info');
     }
 
     cargarDatos() {
