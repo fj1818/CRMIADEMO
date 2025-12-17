@@ -202,7 +202,7 @@ Promueve nuestro crédito automotriz con condiciones especiales para flotillas e
         tasa: 13.0,
         idProspecto: "184123456789012306",
         estado: "Abierta",
-        estadoVenta: "Fabrica",
+        estadoVenta: "PIC",
         campania: {
             nombre: "Campaña Impulso PyME",
             descripcion: `💼 Descripción de la Oferta
@@ -436,7 +436,7 @@ Impulsa la Tarjeta Corporate Platinum orientada a control de gastos.
         tasa: 10.5,
         idProspecto: "184123456789012321",
         estado: "Abierta",
-        estadoVenta: "Fabrica"
+        estadoVenta: "PIC"
     },
     {
         id: 20,
@@ -583,7 +583,7 @@ const OPORTUNIDADES_STATS = {
         noContactado: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "No contactado").length,
         interesado: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Interesado").length,
         negociacion: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Negociación").length,
-        fabrica: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Fabrica").length,
+        pic: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "PIC").length,
         formalizacion: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Formalización").length,
         entregadoAlCliente: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Entregado al cliente").length,
         timbrado: OPORTUNIDADES_DATA.filter(o => o.estadoVenta === "Timbrado").length
@@ -663,7 +663,7 @@ const OportunidadesUtils = {
      * Obtiene monto total por estado de venta
      */
     getMontosPorEstadoVenta() {
-        const estados = ["No contactado", "Interesado", "Negociación", "Fabrica", "Formalización", "Entregado al cliente", "Timbrado"];
+        const estados = ["No contactado", "Interesado", "Negociación", "PIC", "Formalización", "Entregado al cliente", "Timbrado"];
         return estados.reduce((acc, estado) => {
             acc[estado] = this.getPorEstadoVenta(estado).reduce((sum, o) => sum + o.montoOportunidad, 0);
             return acc;

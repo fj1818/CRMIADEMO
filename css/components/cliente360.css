@@ -156,6 +156,37 @@
     flex-wrap: wrap;
 }
 
+/* Botón Toggle Vista Privacidad */
+.btn-toggle-view {
+    background: linear-gradient(135deg, #2272FF 0%, #1a5acc 100%);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-toggle-view:hover {
+    background: linear-gradient(135deg, #1a5acc 0%, #1450b8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 114, 255, 0.35);
+}
+
+.btn-toggle-view[data-modo="saldos"] {
+    background: linear-gradient(135deg, #FF8800 0%, #e67a00 100%);
+}
+
+.btn-toggle-view[data-modo="saldos"]:hover {
+    background: linear-gradient(135deg, #e67a00 0%, #cc6d00 100%);
+    box-shadow: 0 4px 12px rgba(255, 136, 0, 0.35);
+}
+
 /* Grid de Métricas */
 .cliente360-metrics-grid {
     display: grid;

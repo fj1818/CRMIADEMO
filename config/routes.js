@@ -29,7 +29,7 @@ const ROUTES = {
     },
     'mi-cartera': {
         id: 'mi-cartera',
-        name: 'Mi Cartera',
+        name: 'Mis Clientes',
         icon: '📊',
         description: 'Análisis de tu cartera de clientes',
         module: 'MiCarteraModule'

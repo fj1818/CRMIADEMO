@@ -271,6 +271,14 @@ class AssistantIAModule {
             ? ProductosUtils.getTodos()
             : (window.PRODUCTOS_DATA || []);
 
+        const variaciones = window.VariacionesUtils && typeof VariacionesUtils.getTodos === 'function'
+            ? VariacionesUtils.getTodos()
+            : (window.VARIACIONES_DATA || []);
+
+        const resumenVariaciones = window.VariacionesUtils && typeof VariacionesUtils.getResumen === 'function'
+            ? VariacionesUtils.getResumen()
+            : null;
+
         return {
             oportunidades,
             prospectos,
@@ -279,6 +287,7 @@ class AssistantIAModule {
             juntas,
             agenda: agendaEventos,
             productos,
+            variaciones,
             origin,
             resumen: {
                 totalOportunidades: oportunidades.length,
@@ -288,7 +297,8 @@ class AssistantIAModule {
                 totalAcciones: accionesTotales.length,
                 totalJuntas: juntas.length,
                 agendaProgramada: agendaEventos.length,
-                productosActivos: productos.filter(p => !p.fechaBaja).length
+                productosActivos: productos.filter(p => !p.fechaBaja).length,
+                variaciones: resumenVariaciones
             }
         };
     }

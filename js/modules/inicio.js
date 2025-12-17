@@ -91,7 +91,7 @@ class InicioModule {
             <div class="inicio-dashboard__filters">
                 <span class="inicio-dashboard__filters-label">Filtrar por:</span>
                 <select>
-                    <option>Mi cartera completa</option>
+                    <option>Mis clientes</option>
                     <option>Clientes empresariales</option>
                     <option>Clientes PyME</option>
                     <option>Clientes gobierno</option>
@@ -313,23 +313,21 @@ class InicioModule {
                     <table class="inicio-dashboard__table">
                         <thead>
                             <tr>
-                                <th>Prioridad</th>
                                 <th>Cliente</th>
                                 <th>Acción</th>
-                                <th>Fecha límite</th>
+                                <th>Hora</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${listaTareas.length ? listaTareas.map(tarea => `
                                 <tr>
-                                    <td><span class="inicio-dashboard__badge ${tarea.badgeClass}">${tarea.prioridad}</span></td>
                                     <td>${tarea.cliente}</td>
                                     <td>${tarea.accion}</td>
                                     <td>${tarea.fecha}</td>
                                 </tr>
                             `).join('') : `
                                 <tr>
-                                    <td colspan="4" style="text-align:center; color:#7f8c9a; padding:16px;">No hay tareas programadas.</td>
+                                    <td colspan="3" style="text-align:center; color:#7f8c9a; padding:16px;">No hay tareas programadas.</td>
                                 </tr>
                             `}
                         </tbody>
@@ -501,22 +499,108 @@ class InicioModule {
     }
 
     getTareasPriorizadas(acciones) {
-        const pendientesOrdenados = [...acciones].sort((a, b) => new Date(a.fechaTarea) - new Date(b.fechaTarea));
-        return pendientesOrdenados.slice(0, 5).map(accion => {
-            const fecha = accion.fechaTarea ? Helpers.formatDate(new Date(accion.fechaTarea)) : 'Sin fecha';
-            const prospecto = window.ProspectosUtils ? ProspectosUtils.getPorId(accion.idProspecto) : null;
-            const cliente = window.ClientesUtils ? ClientesUtils.getTodos().find(c => c.ide === accion.idCliente) : null;
-            const nombreReferencia = prospecto ? prospecto.nombre : cliente ? cliente.nombre : (accion.idCliente || accion.idProspecto || 'N/A');
-            const prioridad = this.calcularPrioridad(accion.fechaTarea);
-            const badgeClass = this.obtenerBadgePrioridad(prioridad);
-            return {
-                prioridad,
-                badgeClass,
-                cliente: nombreReferencia,
-                accion: accion.tarea,
-                fecha
-            };
-        });
+        // Intentar obtener tareas del módulo de Mis Actividades
+        let tareasDelDia = [];
+        let moduloAcciones = window.MisAccionesModuleInstance;
+        
+        // Si el módulo no está inicializado, intentar inicializarlo
+        if (!moduloAcciones && window.MisAccionesModule) {
+            moduloAcciones = new window.MisAccionesModule();
+            moduloAcciones.init();
+            window.MisAccionesModuleInstance = moduloAcciones;
+        }
+        
+        // Asegurar que las tareas estén generadas
+        if (moduloAcciones && (!moduloAcciones.tareas || !moduloAcciones.tareas.dia || !moduloAcciones.tareas.dia.tareas || moduloAcciones.tareas.dia.tareas.length === 0)) {
+            if (typeof moduloAcciones.cargarDatos === 'function') {
+                moduloAcciones.cargarDatos();
+            } else if (typeof moduloAcciones.generarTareas === 'function') {
+                moduloAcciones.generarTareas();
+            }
+        }
+        
+        if (moduloAcciones && moduloAcciones.tareas && moduloAcciones.tareas.dia && moduloAcciones.tareas.dia.tareas) {
+            // Obtener las tareas del día que no estén completadas
+            tareasDelDia = moduloAcciones.tareas.dia.tareas
+                .filter(tarea => !tarea.completada)
+                .sort((a, b) => {
+                    // Ordenar por hora (las más tempranas primero)
+                    const horaA = a.hora || '23:59';
+                    const horaB = b.hora || '23:59';
+                    return horaA.localeCompare(horaB);
+                })
+                .slice(0, 5) // Tomar máximo 5 tareas
+                .map(tarea => {
+                    // Extraer el nombre del cliente del título
+                    // Los títulos tienen formato como "Reunirme con {nombre} para..."
+                    let nombreCliente = 'Cliente';
+                    const matchTitulo = tarea.titulo.match(/(?:con|a)\s+([^para|para|y|,]+?)(?:\s+para|\s+y|,|$)/i);
+                    if (matchTitulo && matchTitulo[1]) {
+                        nombreCliente = matchTitulo[1].trim();
+                    }
+                    
+                    // Calcular prioridad basada en la hora
+                    const prioridad = this.calcularPrioridadPorHora(tarea.hora);
+                    const badgeClass = this.obtenerBadgePrioridad(prioridad);
+                    
+                    // Formatear fecha y hora
+                    let fechaDisplay = 'Hoy';
+                    if (tarea.hora) {
+                        fechaDisplay = tarea.hora;
+                    }
+                    
+                    return {
+                        prioridad,
+                        badgeClass,
+                        cliente: nombreCliente,
+                        accion: tarea.titulo,
+                        fecha: fechaDisplay
+                    };
+                });
+        }
+        
+        // Si no hay tareas del módulo de actividades, usar las acciones tradicionales como fallback
+        if (tareasDelDia.length === 0) {
+            const pendientesOrdenados = [...acciones].sort((a, b) => new Date(a.fechaTarea) - new Date(b.fechaTarea));
+            return pendientesOrdenados.slice(0, 5).map(accion => {
+                const fecha = accion.fechaTarea ? Helpers.formatDate(new Date(accion.fechaTarea)) : 'Sin fecha';
+                const prospecto = window.ProspectosUtils ? ProspectosUtils.getPorId(accion.idProspecto) : null;
+                const cliente = window.ClientesUtils ? ClientesUtils.getTodos().find(c => c.ide === accion.idCliente) : null;
+                const nombreReferencia = prospecto ? prospecto.nombre : cliente ? cliente.nombre : (accion.idCliente || accion.idProspecto || 'N/A');
+                const prioridad = this.calcularPrioridad(accion.fechaTarea);
+                const badgeClass = this.obtenerBadgePrioridad(prioridad);
+                return {
+                    prioridad,
+                    badgeClass,
+                    cliente: nombreReferencia,
+                    accion: accion.tarea,
+                    fecha
+                };
+            });
+        }
+        
+        return tareasDelDia;
+    }
+    
+    calcularPrioridadPorHora(hora) {
+        if (!hora) return 'Media';
+        const [horas, minutos] = hora.split(':').map(Number);
+        const horaActual = new Date();
+        const horaActualNum = horaActual.getHours() * 60 + horaActual.getMinutes();
+        const horaTareaNum = horas * 60 + minutos;
+        
+        // Si la hora ya pasó, es alta prioridad
+        if (horaTareaNum < horaActualNum) return 'Alta';
+        
+        // Si es en las próximas 2 horas, es alta prioridad
+        const diferenciaMinutos = horaTareaNum - horaActualNum;
+        if (diferenciaMinutos <= 120) return 'Alta';
+        
+        // Si es en las próximas 4 horas, es media prioridad
+        if (diferenciaMinutos <= 240) return 'Media';
+        
+        // Si es más tarde, es baja prioridad
+        return 'Baja';
     }
 
     getResumenProspectos(prospectos) {
@@ -584,7 +668,7 @@ class InicioModule {
             'No contactado',
             'Interesado',
             'Negociación',
-            'Fabrica',
+            'PIC',
             'Formalización',
             'Entregado al cliente',
             'Timbrado'
@@ -780,7 +864,7 @@ class InicioModule {
             'No contactado': 'inicio-dashboard__badge--info',
             'Interesado': 'inicio-dashboard__badge--info',
             'Negociación': 'inicio-dashboard__badge--warning',
-            'Fabrica': 'inicio-dashboard__badge--warning',
+            'PIC': 'inicio-dashboard__badge--warning',
             'Formalización': 'inicio-dashboard__badge--warning',
             'Entregado al cliente': 'inicio-dashboard__badge--success',
             'Timbrado': 'inicio-dashboard__badge--success'

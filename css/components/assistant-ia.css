@@ -367,12 +367,7 @@
 }
 
 .recordatorio-card.completada {
-    opacity: 0.6;
-}
-
-.recordatorio-card.completada .recordatorio-title span:last-child {
-    text-decoration: line-through;
-    color: var(--gray-500);
+    opacity: 1;
 }
 
 .recordatorio-title,

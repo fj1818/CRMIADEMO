@@ -95,7 +95,7 @@ class OportunidadesModule {
             { nombre: 'No contactado', color: '#E8ECF0', count: stats.porEstadoVenta.noContactado, monto: montosPorEstado['No contactado'] },
             { nombre: 'Interesado', color: '#CCE5FF', count: stats.porEstadoVenta.interesado, monto: montosPorEstado['Interesado'] },
             { nombre: 'Negociación', color: '#FFE4CC', count: stats.porEstadoVenta.negociacion, monto: montosPorEstado['Negociación'] },
-            { nombre: 'Fabrica', color: '#FFEAA7', count: stats.porEstadoVenta.fabrica, monto: montosPorEstado['Fabrica'] },
+            { nombre: 'PIC', color: '#FFEAA7', count: stats.porEstadoVenta.pic, monto: montosPorEstado['PIC'] },
             { nombre: 'Formalización', color: '#DFE6E9', count: stats.porEstadoVenta.formalizacion, monto: montosPorEstado['Formalización'] },
             { nombre: 'Entregado al cliente', color: '#74B9FF', count: stats.porEstadoVenta.entregadoAlCliente, monto: montosPorEstado['Entregado al cliente'] },
             { nombre: 'Timbrado', color: '#55EFC4', count: stats.porEstadoVenta.timbrado, monto: montosPorEstado['Timbrado'] }
@@ -368,7 +368,7 @@ class OportunidadesModule {
                             'No contactado': 'badge-secondary',
                             'Interesado': 'badge-info',
                             'Negociación': 'badge-warning',
-                            'Fabrica': 'badge-primary',
+                            'PIC': 'badge-primary',
                             'Formalización': 'badge-info',
                             'Entregado al cliente': 'badge-success',
                             'Timbrado': 'badge-success'
@@ -422,7 +422,7 @@ class OportunidadesModule {
                         { value: 'No contactado', label: 'No contactado' },
                         { value: 'Interesado', label: 'Interesado' },
                         { value: 'Negociación', label: 'Negociación' },
-                        { value: 'Fabrica', label: 'Fábrica' },
+                        { value: 'PIC', label: 'PIC' },
                         { value: 'Formalización', label: 'Formalización' },
                         { value: 'Entregado al cliente', label: 'Entregado' },
                         { value: 'Timbrado', label: 'Timbrado' }
@@ -645,7 +645,7 @@ class OportunidadesModule {
             'No contactado',
             'Interesado',
             'Negociación',
-            'Fabrica',
+            'PIC',
             'Formalización',
             'Entregado al cliente',
             'Timbrado'

@@ -71,6 +71,17 @@ Para Cotizaciones de Créditos:
 - Si falta el tipo de crédito o el plazo, pide la información faltante antes de cotizar.
 - Para créditos hipotecarios, convierte años a meses (años × 12).
 
+Para Variaciones de Clientes:
+- La tabla de variaciones (`variaciones`) contiene registros de movimientos en las cuentas de los clientes durante el mes actual.
+- Cada registro tiene: `cliente` (nombre del cliente), `variacion` (monto formateado con signo), `variacionNumero` (valor numérico), `tipo` (incremento o decremento), `fechaVariacion` (fecha del movimiento) y `producto` (Cuenta cheques o Crédito).
+- Cuando el usuario pregunte por variaciones, principales movimientos, incrementos o decrementos:
+  * Identifica los movimientos más relevantes ordenados por monto.
+  * Menciona el cliente, el tipo de producto, el monto de la variación y la fecha.
+  * Para "principales variaciones" muestra los top 5 incrementos y/o decrementos según el contexto de la pregunta.
+  * Si preguntan por un cliente específico, filtra las variaciones de ese cliente.
+  * Si preguntan por un producto específico (cheques o crédito), filtra por ese producto.
+- Formatea todos los montos como dinero MXN con el signo correspondiente (+ o -).
+
 Pregunta del usuario:
 {{$json.chatInput}}
 
