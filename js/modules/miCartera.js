@@ -362,7 +362,7 @@ class MiCarteraModule {
                     <span class="cliente360-breadcrumb-separator">/</span>
                     <a href="#" id="breadcrumb-volver-clientes">Clientes</a>
                     <span class="cliente360-breadcrumb-separator">/</span>
-                    <span data-cliente-info data-original="${cliente.nombre}">${cliente.nombre}</span>
+                    <span>${cliente.nombre}</span>
                 </div>
                 
                 <!-- Contenido -->
@@ -370,18 +370,18 @@ class MiCarteraModule {
                     <!-- Cliente Header -->
                     <div class="cliente360-header">
                         <div class="cliente360-info-wrapper">
-                            <div class="cliente360-avatar" data-cliente-info>${iniciales}</div>
+                            <div class="cliente360-avatar">${iniciales}</div>
                             <div class="cliente360-info">
-                                <h1 data-cliente-info data-original="${cliente.nombre}">${cliente.nombre}</h1>
+                                <h1>${cliente.nombre}</h1>
                                 <div class="cliente360-meta">
                                     <div class="cliente360-meta-item">
-                                        <strong>RFC:</strong> <span data-cliente-info data-original="${cliente.rfc}">${cliente.rfc}</span>
+                                        <strong>RFC:</strong> ${cliente.rfc}
                                     </div>
                                     <div class="cliente360-meta-item">
                                         <strong>Tipo:</strong> ${this.getTipoCorto(cliente.tipoPersona)}
                                     </div>
                                     <div class="cliente360-meta-item">
-                                        <strong>IDE:</strong> <span data-cliente-info data-original="${cliente.ide}">${cliente.ide}</span>
+                                        <strong>IDE:</strong> ${cliente.ide}
                                     </div>
                                     <div class="cliente360-meta-item">
                                         <strong>Cliente desde:</strong> ${Helpers.formatDate(new Date(cliente.fechaAlta))}
@@ -391,7 +391,6 @@ class MiCarteraModule {
                         </div>
                         <div class="cliente360-actions">
                             <button class="btn btn-primary">+ Nueva Oportunidad</button>
-                            <button class="btn btn-toggle-view" id="btn-toggle-vista" data-modo="cliente">💰 Consultar Saldos</button>
                             <button class="btn btn-secondary">📞 Registrar Contacto</button>
                             <button class="btn btn-secondary">📝 Historial</button>
                         </div>
@@ -400,19 +399,19 @@ class MiCarteraModule {
                     <!-- Métricas Rápidas -->
                     <div class="cliente360-metrics-grid">
                         <div class="cliente360-metric-card">
-                            <div class="cliente360-metric-value" data-saldo-info data-original="${Helpers.formatCurrency(carteraTotal)}">***</div>
+                            <div class="cliente360-metric-value">${Helpers.formatCurrency(carteraTotal)}</div>
                             <div class="cliente360-metric-label">Cartera Total</div>
                         </div>
                         <div class="cliente360-metric-card">
-                            <div class="cliente360-metric-value" data-saldo-info data-original="${Helpers.formatCurrency(utilidadAnual)}">***</div>
+                            <div class="cliente360-metric-value">${Helpers.formatCurrency(utilidadAnual)}</div>
                             <div class="cliente360-metric-label">Utilidad Anual Est.</div>
                         </div>
                         <div class="cliente360-metric-card">
-                            <div class="cliente360-metric-value" data-saldo-info data-original="${scoreReciprocidad}%">***</div>
+                            <div class="cliente360-metric-value">${scoreReciprocidad}%</div>
                             <div class="cliente360-metric-label">Score Reciprocidad</div>
                         </div>
                         <div class="cliente360-metric-card">
-                            <div class="cliente360-metric-value" data-saldo-info data-original="${Helpers.formatCurrency(saldoPromedio)}">***</div>
+                            <div class="cliente360-metric-value">${Helpers.formatCurrency(saldoPromedio)}</div>
                             <div class="cliente360-metric-label">Saldo Promedio</div>
                         </div>
                         <div class="cliente360-metric-card">
@@ -508,7 +507,6 @@ class MiCarteraModule {
             const btnVolverTop = document.getElementById('btn-volver-clientes-top');
             const breadcrumbClientes = document.getElementById('breadcrumb-volver-clientes');
             const breadcrumbCartera = document.getElementById('breadcrumb-volver-cartera');
-            const btnToggleVista = document.getElementById('btn-toggle-vista');
             
             if (btnVolverTop) {
                 btnVolverTop.addEventListener('click', () => {
@@ -529,47 +527,7 @@ class MiCarteraModule {
                     this.volverAListaClientes();
                 });
             }
-            
-            if (btnToggleVista) {
-                btnToggleVista.addEventListener('click', () => {
-                    this.toggleVistaPrivacidad(btnToggleVista);
-                });
-            }
         }, 0);
-    }
-    
-    /**
-     * Alterna la visibilidad entre datos del cliente y saldos
-     */
-    toggleVistaPrivacidad(boton) {
-        const modoActual = boton.dataset.modo;
-        const elementosCliente = document.querySelectorAll('[data-cliente-info]');
-        const elementosSaldo = document.querySelectorAll('[data-saldo-info]');
-        
-        if (modoActual === 'cliente') {
-            // Cambiar a modo saldos: mostrar saldos, ocultar cliente
-            elementosSaldo.forEach(el => {
-                el.textContent = el.dataset.original;
-            });
-            elementosCliente.forEach(el => {
-                if (!el.dataset.hidden) {
-                    el.dataset.hidden = el.textContent;
-                }
-                el.textContent = '***';
-            });
-            boton.textContent = '👤 Mostrar Cliente';
-            boton.dataset.modo = 'saldos';
-        } else {
-            // Cambiar a modo cliente: mostrar cliente, ocultar saldos
-            elementosCliente.forEach(el => {
-                el.textContent = el.dataset.original || el.dataset.hidden;
-            });
-            elementosSaldo.forEach(el => {
-                el.textContent = '***';
-            });
-            boton.textContent = '💰 Consultar Saldos';
-            boton.dataset.modo = 'cliente';
-        }
     }
     
     /**
@@ -641,12 +599,10 @@ class MiCarteraModule {
                 Helpers.formatDate(new Date(p.fechaBaja)) : 
                 (p.plazoTotal ? `${p.plazoRestante}/${p.plazoTotal} meses` : '-');
             
-            const montoFormateado = p.montoLinea ? Helpers.formatCurrency(p.montoLinea) : '-';
-            
             return `
                 <tr>
                     <td><strong>${p.nombreProducto}</strong></td>
-                    <td><span data-saldo-info data-original="${montoFormateado}">***</span></td>
+                    <td>${p.montoLinea ? Helpers.formatCurrency(p.montoLinea) : '-'}</td>
                     <td>${vencimiento}</td>
                     <td>${estado}</td>
                 </tr>
@@ -699,11 +655,10 @@ class MiCarteraModule {
         const rows = oportunidades.map(o => {
             const badgeClass = o.probabilidad >= 70 ? 'badge-success' : 
                               o.probabilidad >= 40 ? 'badge-warning' : 'badge-info';
-            const valorFormateado = Helpers.formatCurrency(o.valor);
             return `
                 <tr>
                     <td><strong>${o.nombre}</strong></td>
-                    <td><span data-saldo-info data-original="${valorFormateado}">***</span></td>
+                    <td>${Helpers.formatCurrency(o.valor)}</td>
                     <td>${o.etapa}</td>
                     <td><span class="badge ${badgeClass}">${o.probabilidad}%</span></td>
                 </tr>
@@ -897,22 +852,19 @@ class MiCarteraModule {
         const clasificacionBadge = carteraTotal > 1000000 ? 'badge-success' : 
                                   carteraTotal > 500000 ? 'badge-info' : 'badge-secondary';
         
-        const utilidadFormateada = Helpers.formatCurrency(utilidadAnual);
-        const saldoFormateado = Helpers.formatCurrency(saldoPromedio);
-        
         return `
             <div class="cliente360-stat-box">
                 <div class="cliente360-stat-label">Utilidad Generada (12 meses)</div>
-                <div class="cliente360-stat-value" data-saldo-info data-original="${utilidadFormateada}">***</div>
+                <div class="cliente360-stat-value">${Helpers.formatCurrency(utilidadAnual)}</div>
             </div>
             <div class="cliente360-stat-box">
                 <div class="cliente360-stat-label">Saldo Promedio Mensual</div>
-                <div class="cliente360-stat-value" data-saldo-info data-original="${saldoFormateado}">***</div>
+                <div class="cliente360-stat-value">${Helpers.formatCurrency(saldoPromedio)}</div>
             </div>
             <div class="cliente360-stat-box">
                 <div class="cliente360-stat-label">Cumplimiento Reciprocidad</div>
                 <div class="cliente360-stat-value">
-                    <span class="badge ${scoreReciprocidad >= 70 ? 'badge-success' : 'badge-warning'}" data-saldo-info data-original="${scoreReciprocidad}%">***</span>
+                    <span class="badge ${scoreReciprocidad >= 70 ? 'badge-success' : 'badge-warning'}">${scoreReciprocidad}%</span>
                 </div>
             </div>
             <div class="cliente360-stat-box">
